@@ -31,6 +31,7 @@ class MemorizationGame:
         # Left and Right buttons
         self.btLeft = tk.Button(button_frame, text="Left", command=lambda: self.add_to_player_sequence("Left"))
         self.btLeft.grid(row=1, column=0, padx=5)
+        self.btLeft['font'] = critterfont
 
         self.btRight = tk.Button(button_frame, text="Right", command=lambda: self.add_to_player_sequence("Right"))
         self.btRight.grid(row=1, column=2, padx=5)
