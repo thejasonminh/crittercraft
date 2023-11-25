@@ -1,65 +1,99 @@
 import tkinter as tk
+from tkinter import messagebox
 import random
 
-class CatchTheLoveGame:
+
+class TicTacToeComputerPlayer:
     def __init__(self):
-        self.love = 0  # Initial love level
-        self.love_cap = 10  # Maximum love level
-
         self.window = tk.Tk()
-        self.window.title("Catch the Love")
+        self.window.title("Tic-Tac-Toe - Bone Theme")
 
-        self.canvas = tk.Canvas(self.window, width=400, height=400, bg="white")
-        self.canvas.pack()
+        self.current_player = "X"
+        self.board = [["", "", ""], ["", "", ""], ["", "", ""]]
 
-        self.basket = self.canvas.create_rectangle(150, 350, 250, 370, fill="blue")
-        self.canvas.bind("<Left>", lambda event: self.move_basket(-20, 0))
-        self.canvas.bind("<Right>", lambda event: self.move_basket(20, 0))
+        self.buttons = [[None, None, None], [
+            None, None, None], [None, None, None]]
 
-        self.falling_love = []
+        for i in range(3):
+            for j in range(3):
+                self.buttons[i][j] = tk.Button(self.window, text="", font=("Helvetica", 24),
+                                               width=5, height=2, command=lambda row=i, col=j: self.on_click(row, col))
+                self.buttons[i][j].grid(row=i, column=j)
 
-        self.update_love_display()
-        self.spawn_love()
+        self.computer_player = "O"
+        self.user_can_click = True  # Flag to control user input
 
-        self.window.mainloop()
+    def on_click(self, row, col):
+        if self.user_can_click and self.board[row][col] == "" and not self.check_winner():
+            self.user_can_click = False  # Disable user input during computer's turn
+            self.board[row][col] = self.current_player
+            self.update_button(row, col)
 
-    def move_basket(self, dx, dy):
-        basket_coords = self.canvas.coords(self.basket)
-        if 0 < basket_coords[0] + dx < 400 and 0 < basket_coords[2] + dx < 400:
-            self.canvas.move(self.basket, dx, dy)
+            if self.check_winner():
+                messagebox.showinfo(
+                    "Tic-Tac-Toe", f"Player {self.current_player} wins!")
+                self.reset_game()
+            elif self.check_tie():
+                messagebox.showinfo("Tic-Tac-Toe", "It's a tie!")
+                self.reset_game()
+            else:
+                self.current_player = "O" if self.current_player == "X" else "X"
 
-    def spawn_love(self):
-        x = random.randint(50, 350)
-        y = 0
-        love_shape = self.canvas.create_text(x, y, text="❤", font=("Helvetica", 12), fill="red")
-        self.falling_love.append(love_shape)
-        self.move_love(love_shape)
+                if self.current_player == self.computer_player:
+                    # After a delay, enable user input and let the computer make its move
+                    self.window.after(1000, self.computer_move)
 
-    def move_love(self, love_shape):
-        if self.canvas.coords(love_shape)[1] < 400:
-            self.canvas.move(love_shape, 0, 5)
-            self.window.after(50, lambda: self.move_love(love_shape))
-        else:
-            self.check_catch(love_shape)
+    def update_button(self, row, col):
+        symbol = "🦴" if self.current_player == "X" else "🐾"
+        self.buttons[row][col].config(text=symbol, state=tk.DISABLED)
 
-    def check_catch(self, love_shape):
-        basket_coords = self.canvas.coords(self.basket)
-        love_coords = self.canvas.coords(love_shape)
+    def check_winner(self):
+        for i in range(3):
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] != "":
+                return True  # Check rows
+            if self.board[0][i] == self.board[1][i] == self.board[2][i] != "":
+                return True  # Check columns
 
-        if (
-            basket_coords[0] < love_coords[0] < basket_coords[2]
-            or basket_coords[0] < love_coords[2] < basket_coords[2]
-        ):
-            self.love += 1
-            self.update_love_display()
-            self.falling_love.remove(love_shape)
-            self.canvas.delete(love_shape)
-            self.spawn_love()
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] != "":
+            return True  # Check diagonal from top-left to bottom-right
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] != "":
+            return True  # Check diagonal from top-right to bottom-left
 
-    def update_love_display(self):
-        self.canvas.delete("love_display")
-        love_display = f"Love Level: {self.love}/{self.love_cap}"
-        self.canvas.create_text(200, 20, text=love_display, font=("Helvetica", 12), tags="love_display")
+        return False
+
+    def check_tie(self):
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] == "":
+                    return False
+        return True
+
+    def reset_game(self):
+        for i in range(3):
+            for j in range(3):
+                self.board[i][j] = ""
+                self.buttons[i][j].config(text="", state=tk.NORMAL)
+        self.user_can_click = True  # Reset user input flag
+
+    def computer_move(self):
+        empty_cells = [(i, j) for i in range(3)
+                       for j in range(3) if self.board[i][j] == ""]
+        if empty_cells:
+            row, col = random.choice(empty_cells)
+            self.board[row][col] = self.computer_player
+            self.update_button(row, col)
+            if self.check_winner():
+                messagebox.showinfo(
+                    "Tic-Tac-Toe", f"Player {self.computer_player} wins!")
+                self.reset_game()
+            elif self.check_tie():
+                messagebox.showinfo("Tic-Tac-Toe", "It's a tie!")
+                self.reset_game()
+            else:
+                self.current_player = "X"
+                self.user_can_click = True  # Enable user input for the next turn
+
 
 if __name__ == "__main__":
-    catch_the_love_game = CatchTheLoveGame()
+    game = TicTacToeComputerPlayer()
+    game.window.mainloop()
