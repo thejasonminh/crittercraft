@@ -24,9 +24,9 @@ class crittercraft():
         self.canvas = Canvas(window, width = 800, height = 800, bg = "white")
         self.canvas.pack()
 
-        self.logoImage = PhotoImage(file = f"{p.parent}\cclogo.png")
+        self.logoImage = PhotoImage(file = f"{p.parent}/cclogo.png")
 
-        self.canvas.create_image(400, 200, image = self.logoImage, tag = "logo")
+        self.canvas.create_image(400, 300, image = self.logoImage, tag = "logo")
         btn_next = Button(window, text = "Create Your Critter!", bg = "#8cc45c")
         btn_next['font'] = critterFont
         self.canvas.create_window(400, 600, window = btn_next)
