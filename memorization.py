@@ -79,11 +79,11 @@ class MemorizationGame:
             self.master.after((i + 1) * 2200, self.clear_highlight)
 
     def highlight_button(self, direction):
-        self.get_button(direction).config(fg="red")
+        self.get_button(direction).config(bg="red")
 
     def clear_highlight(self):
         for direction in ["Left", "Right", "Up", "Down"]:
-            self.get_button(direction).config(fg="black")
+            self.get_button(direction).config(bg="")
 
     def check_sequence(self):
         print(self.player_sequence)
