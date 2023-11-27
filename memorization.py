@@ -70,14 +70,14 @@ class MemorizationGame:
 
     def generate_sequence(self):
         directions = ["Left", "Right", "Up", "Down"]
-        for i in range(5):  # Adjust the number of moves in the sequence as needed
+        for i in range(4):  # Adjust the number of moves in the sequence as needed
             self.sequence.append(random.choice(directions))
 
     def show_sequence(self):
         print(self.sequence)
         for i, direction in enumerate(self.sequence):
             self.master.after(i * 1500, lambda d=direction: self.highlight_button(d))
-            self.master.after((i + 1) * 2200, self.clear_highlight)
+            self.master.after((i + 1) * 1500, self.clear_highlight)
 
     def highlight_button(self, direction):
         self.get_button(direction).config(fg="red")
