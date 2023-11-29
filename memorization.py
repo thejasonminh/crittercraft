@@ -14,6 +14,14 @@ class MemorizationGame:
 
         critterfont = font.Font(family = "Helvetica")
         critterFont = font.Font(size = 20)
+        
+        # Create labels
+        label_frame = tk.Frame(self.master)
+        label_frame.pack(pady=10)
+
+        self.lbWelcome = tk.Label(label_frame, text="Welcome to Memorize Me!").grid(row=0, column=1)
+        self.lbInstructions = tk.Label(label_frame, text="Press start to see the pattern, memorize and copy it, and click submit.").grid(row=1, column=1)
+        self.lbStatus = tk.Label(label_frame, text="").grid(row=3, column=1)
 
         # Create buttons
         button_frame = tk.Frame(self.master)
@@ -42,7 +50,7 @@ class MemorizationGame:
         start_button.grid(row=1, column=1, pady=10)
         start_button['font'] = critterfont
 
-        submit_button = tk.Button(button_frame, text="Submit", command=self.check_sequence)
+        submit_button = tk.Button(button_frame, text="Submit Sequence", command=self.check_sequence)
         submit_button.grid(row=3, column=1)
         submit_button['font'] = critterfont
 
@@ -70,14 +78,13 @@ class MemorizationGame:
 
     def generate_sequence(self):
         directions = ["Left", "Right", "Up", "Down"]
-        for i in range(4):  # Adjust the number of moves in the sequence as needed
+        for i in range(5):  # Adjust the number of moves in the sequence as needed
             self.sequence.append(random.choice(directions))
 
     def show_sequence(self):
-        print(self.sequence)
         for i, direction in enumerate(self.sequence):
             self.master.after(i * 1500, lambda d=direction: self.highlight_button(d))
-            self.master.after((i + 1) * 1500, self.clear_highlight)
+            self.master.after((i + 1) * 1800, self.clear_highlight)
 
     def highlight_button(self, direction):
         self.get_button(direction).config(fg="red")
@@ -87,7 +94,6 @@ class MemorizationGame:
             self.get_button(direction).config(fg="black")
 
     def check_sequence(self):
-        print(self.player_sequence)
         if self.player_sequence == self.sequence:
             messagebox.showinfo("Success", "Correct sequence! You won!")
         else:
