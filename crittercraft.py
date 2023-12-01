@@ -75,6 +75,15 @@ class crittercraft():
         self.pink_panda = self.pink_panda.zoom(25)
         self.pink_panda = self.pink_panda.subsample(60)
 
+        # Background pictures
+        # self.bg_default = PhotoImage(file = f"{p.parent}/bg_default.png")
+        # self.bg_death = PhotoImage(file = f"{p.parent}/bg_death.png")
+        # Resize
+        # self.bg_default = self.bg_default.zoom(1)
+        # self.bg_default = self.bg_default.subsample(60)
+        #self.bg_death = self.bg_death.zoom(25)
+        #self.bg_death = self.bg_death.subsample(60)
+
         ## Drawing the image into the canvas
         self.canvas.create_image(400, 300, image = self.logoImage, tag = "logo")
 
@@ -277,6 +286,9 @@ class crittercraft():
         ## Clear the screen
         self.canvas.delete("all")
         self.yourCritterName = self.critterName.get()
+
+        # Display background
+        # self.canvas.create_image(400, 400, image = self.bg_default)
 
         ## Create a header rectangle
         self.canvas.create_rectangle(0, 0, 800, 150, fill = "#8cc45c")
