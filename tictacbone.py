@@ -43,11 +43,11 @@ class TicTacBoneGUI:
 
             if self.winner_check():
                 # Sends message to show win if player wins
-                messagebox.showinfo("You earn 1 🦴!")
+                messagebox.showinfo(title = "Your Mom", message = "You earn 1 🦴!")
                 self.game_reset()  # Resets the game
             elif self.tie_check():
                 # Sends message to show tie if result is a tie
-                messagebox.showinfo("It's a tie! Play again to earn 🦴")
+                messagebox.showinfo(title = "Your Mom", message = "It's a tie! Play again to earn 🦴")
                 self.game_reset()  # Reset the game
             else:
                 self.current_player = self.computer  # If it is currently the computer's turn
