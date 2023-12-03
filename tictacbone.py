@@ -16,7 +16,6 @@ class TicTacBoneGUI:
             None, None, None], [None, None, None]]
         # ADD COMMENT
         self.current_player = "X"
-        self.outcome = 0
 
         # ADD COMMENT
         for i in range(3):
@@ -74,30 +73,30 @@ class TicTacBoneGUI:
         for i in range(3):
             # Horizontal: check if all symbols in the current row are the same and not empty
             if self.board[i][0] == self.board[i][1] == self.board[i][2] != "":
-                return 0  # TRUE if row has the same elements and is not empty
+                return True  # TRUE if row has the same elements and is not empty
 
             # Vertical: check if all symbols in the current column are the same and not empty
             if self.board[0][i] == self.board[1][i] == self.board[2][i] != "":
-                return 0  # TRUE if column has the same elements and is not empty
+                return True  # TRUE if column has the same elements and is not empty
 
         # Diagonal: check if all symbols top-left to bottom-right are the same and not empty
         if self.board[0][0] == self.board[1][1] == self.board[2][2] != "":
-            return 0  # TRUE if diagonal from top-left to bottom-right has the same elements and is not empty
+            return True  # TRUE if diagonal from top-left to bottom-right has the same elements and is not empty
 
         # Diagonal: check if all symbols top-right to bottom-left are the same and not empty
         if self.board[0][2] == self.board[1][1] == self.board[2][0] != "":
-            return 0  # TRUE if diagonal from top-right to bottom-left has the same elements and is not empty
+            return True  # TRUE if diagonal from top-right to bottom-left has the same elements and is not empty
 
         # If none of the conditions above are met, meaning no one has won, return False
-        return 2  # False if there is not a winning condition
+        return False  # False if there is not a winning condition
 
     def tie_check(self):
         # Iterate over rows and columns
         for i in range(3):
             for j in range(3):
                 if self.board[i][j] == "":  # Check for empty slot
-                    return 2  # Game is not a tie if there is an empty slot
-        return 1   # Game is a tie if no empty slot are found
+                    return False  # Game is not a tie if there is an empty slot
+        return True  # Game is a tie if no empty slot are found
 
     def game_reset(self):
         self.window.destroy()  # Close the window
