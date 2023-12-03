@@ -21,7 +21,9 @@ class MemorizationGame:
 
         self.lbWelcome = tk.Label(label_frame, text="Welcome to Memorize Me!").grid(row=0, column=1)
         self.lbInstructions = tk.Label(label_frame, text="Press start to see the pattern, memorize and copy it, and click submit.").grid(row=1, column=1)
-        self.lbStatus = tk.Label(label_frame, text="").grid(row=3, column=1)
+        self.statusVar = tk.StringVar()
+        self.statusVar.set("Press start!")
+        self.lbStatus = tk.Label(label_frame, textvariable = self.statusVar, fg = 'blue').grid(row=3, column=1)
 
         # Create buttons
         button_frame = tk.Frame(self.master)
@@ -69,6 +71,7 @@ class MemorizationGame:
         self.player_sequence.append(direction)
 
     def start_game(self):
+        self.statusVar.set("Wait and watch... When the pattern finishes, repeat it, and press submit!")
         self.sequence = []
         self.player_sequence = []
         self.disable_buttons()
@@ -98,6 +101,7 @@ class MemorizationGame:
             messagebox.showinfo("Success", "Correct sequence! You won!")
         else:
             messagebox.showerror("Error", "Incorrect sequence. Try again.")
+        self.statusVar.set("Press start!")
         self.disable_buttons()
         self.sequence = []
         self.player_sequence = []
