@@ -1,98 +1,57 @@
+import random
 import tkinter as tk
 from tkinter import messagebox
-import random
-import time
 
 
-class TicTacBoneGUI:
-    def __init__(self):
-        self.window = tk.Tk()
-        self.window.title("Tic-Tac-Bone")
+class NumberGuessingGame:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Guess the Number Game")
 
-        self.players_symbol = {"X": "\U0001F984", "O": "\U0001F43E"}
-        self.user = "X"
-        self.board = [["", "", ""], ["", "", ""], ["", "", ""]]
-        self.buttons = [[None, None, None], [
-            None, None, None], [None, None, None]]
-        self.current_player = "X"
+        self.secret_number = random.randint(1, 10)
+        self.attempts = 0
+        self.max_attempts = 3
 
-        for i in range(3):
-            for j in range(3):
-                self.buttons[i][j] = Button(
-                    self.window, text="", font=("Arial", 24),
-                    width=5, height=2, command=lambda row=i, column=j: self.on_click(row, column)
-                )
-                self.buttons[i][j].grid(row=i, column=j)
+        self.label = tk.Label(master, text="Enter your guess (1-10):")
+        self.label.pack()
 
-        self.computer = "O"
-        self.user_turn = True
+        self.entry = tk.Entry(master)
+        self.entry.pack()
 
-        self.window.mainloop()
+        self.guess_button = tk.Button(
+            master, text="Guess", command=self.make_guess)
+        self.guess_button.pack()
 
-    def on_click(self, row, column):
-        if self.user_turn and self.board[row][column] == "" and not self.winner_check():
-            self.user_turn = False
-            self.board[row][column] = self.current_player
-            self.button_update(row, column)
+    def make_guess(self):
+        try:
+            guess = int(self.entry.get())
+            self.check_guess(guess)
+        except ValueError:
+            messagebox.showerror("Error", "Please enter a valid number.")
 
-            if self.winner_check():
-                tkinter.messagebox.showinfo("You earn 1 \U0001F984!")
-                self.game_reset()
-            elif self.tie_check():
-                tkinter.messagebox.showinfo(
-                    "It's a tie! Play again to earn \U0001F984")
-                self.game_reset()
-            else:
-                self.window.after(1000, self.computer_turn)
+    def check_guess(self, guess):
+        self.attempts += 1
 
-    def button_update(self, row, column):
-        symbol = self.players_symbol.get(self.current_player, "")
-        self.buttons[row][column].config(text=symbol, state=DISABLED)
+        if guess == self.secret_number:
+            messagebox.showinfo("Congratulations", f"You guessed the number {
+                                self.secret_number} in {self.attempts} attempts.")
+            self.master.destroy()
+        elif guess < self.secret_number:
+            messagebox.showinfo("Incorrect", "Try again. Go higher.")
+        else:
+            messagebox.showinfo("Incorrect", "Try again. Go lower.")
 
-    def winner_check(self):
-        for i in range(3):
-            if self.board[i][0] == self.board[i][1] == self.board[i][2] != "":
-                return True
-            if self.board[0][i] == self.board[1][i] == self.board[2][i] != "":
-                return True
-
-        if self.board[0][0] == self.board[1][1] == self.board[2][2] != "":
-            return True
-        if self.board[0][2] == self.board[1][1] == self.board[2][0] != "":
-            return True
-
-        return False
-
-    def tie_check(self):
-        for i in range(3):
-            for j in range(3):
-                if self.board[i][j] == "":
-                    return False
-        return True
-
-    def game_reset(self):
-        self.window.destroy()
-        start_new_game = TicTacBoneGUI()
-
-    def computer_turn(self):
-        empty_slot = [(i, j) for i in range(3)
-                      for j in range(3) if self.board[i][j] == ""]
-        if empty_slot:
-            row, column = random.choice(empty_slot)
-            self.board[row][column] = "O"
-            self.button_update(row, column)
-
-            if self.winner_check():
-                tkinter.messagebox.showinfo(
-                    "You lost! Play again to earn \U0001F984")
-                self.game_reset()
-            elif self.tie_check():
-                tkinter.messagebox.showinfo(
-                    "It's a tie! Play again to earn \U0001F984")
-                self.game_reset()
-            else:
-                self.current_player = "X"
-                self.user_turn = True
+        if self.attempts == self.max_attempts:
+            messagebox.showinfo("Game Over", f"Sorry, you've run out of attempts. The correct number was {
+                                self.secret_number}.")
+            self.master.destroy()
 
 
-TicTacBoneGUI()
+def main():
+    root = tk.Tk()
+    game = NumberGuessingGame(root)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()

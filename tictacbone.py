@@ -16,6 +16,7 @@ class TicTacBoneGUI:
             None, None, None], [None, None, None]]
         # ADD COMMENT
         self.current_player = "X"
+        self.outcome = 0
 
         # ADD COMMENT
         for i in range(3):
@@ -46,15 +47,22 @@ class TicTacBoneGUI:
                 messagebox.showinfo(title="TicTacBone",
                                     message="You earn 1 🦴!")
                 self.game_reset()  # Resets the game
-            elif self.tie_check():
-                # Sends message to show tie if result is a tie
-                messagebox.showinfo(
-                    title="TicTacBone", title="TicTacBone", message="It's a tie! Play again to earn 🦴")
-                self.game_reset()  # Reset the game
             else:
                 self.current_player = self.computer  # If it is currently the computer's turn
                 time.sleep(1)  # Add delay
                 self.computer_turn()  # And allow computer to make computer's move
+
+            if self.winner_check():
+                # Sends message to show win if player wins
+                messagebox.showinfo(title="TicTacBone",
+                                    message="You earn 1 🦴!")
+                self.game_reset()  # Resets the game
+            else:
+                self.tie_check()
+                # Sends message to show tie if result is a tie
+                messagebox.showinfo(
+                    title="TicTacBone", message="It's a tie! Play again to earn 🦴")
+                self.game_reset()  # Reset the game
 
     def button_update(self, row, column):
         # Change symbols to bone and paw
@@ -66,30 +74,30 @@ class TicTacBoneGUI:
         for i in range(3):
             # Horizontal: check if all symbols in the current row are the same and not empty
             if self.board[i][0] == self.board[i][1] == self.board[i][2] != "":
-                return True  # TRUE if row has the same elements and is not empty
+                return 0  # TRUE if row has the same elements and is not empty
 
             # Vertical: check if all symbols in the current column are the same and not empty
             if self.board[0][i] == self.board[1][i] == self.board[2][i] != "":
-                return True  # TRUE if column has the same elements and is not empty
+                return 0  # TRUE if column has the same elements and is not empty
 
         # Diagonal: check if all symbols top-left to bottom-right are the same and not empty
         if self.board[0][0] == self.board[1][1] == self.board[2][2] != "":
-            return True  # TRUE if diagonal from top-left to bottom-right has the same elements and is not empty
+            return 0  # TRUE if diagonal from top-left to bottom-right has the same elements and is not empty
 
         # Diagonal: check if all symbols top-right to bottom-left are the same and not empty
         if self.board[0][2] == self.board[1][1] == self.board[2][0] != "":
-            return True  # TRUE if diagonal from top-right to bottom-left has the same elements and is not empty
+            return 0  # TRUE if diagonal from top-right to bottom-left has the same elements and is not empty
 
         # If none of the conditions above are met, meaning no one has won, return False
-        return False  # False if there is not a winning condition
+        return 2  # False if there is not a winning condition
 
     def tie_check(self):
         # Iterate over rows and columns
         for i in range(3):
             for j in range(3):
                 if self.board[i][j] == "":  # Check for empty slot
-                    return False  # Game is not a tie if there is an empty slot
-        return True  # Game is a tie if no empty slot are found
+                    return 2  # Game is not a tie if there is an empty slot
+        return 1   # Game is a tie if no empty slot are found
 
     def game_reset(self):
         self.window.destroy()  # Close the window
