@@ -22,9 +22,12 @@ class crittercraft():
         ## Initializing attributes for critter
         self.critterName = StringVar()
         self.critterType = ""
-        self.critterHealth = 0
-        self.critterLove = 0
-        self.critterStr = 0
+        self.critterHealth = 2
+        self.critterLove = 2
+        self.critterHun = 2
+        self.critterHealthMax = 3
+        self.critterLoveMax = 3
+        self.critterHunMax = 3
         self.yourCritterName = ""
         self.yourCritter = ""
 
@@ -76,54 +79,52 @@ class crittercraft():
         self.pink_panda = self.pink_panda.subsample(60)
 
         # Background pictures
-        # self.bg_default = PhotoImage(file = f"{p.parent}/bg_default.png")
+        self.bg_default = PhotoImage(file = f"{p.parent}/bg_default.png")
         # self.bg_death = PhotoImage(file = f"{p.parent}/bg_death.png")
         # Resize
         # self.bg_default = self.bg_default.zoom(1)
         # self.bg_default = self.bg_default.subsample(60)
-        #self.bg_death = self.bg_death.zoom(25)
-        #self.bg_death = self.bg_death.subsample(60)
+        # self.bg_death = self.bg_death.zoom(25)
+        # self.bg_death = self.bg_death.subsample(60)
 
         ## Drawing the image into the canvas
         self.canvas.create_image(400, 300, image = self.logoImage, tag = "logo")
 
         ## Make buttons to select critter
-        self.btn_Sheep = Button(self.window, text = "Sheep!", bg = "#8cc45c", command = self.sheepColor)
-        self.btn_Duck = Button(self.window, text = "Duck!", bg = "#8cc45c", command = self.duckColor)
-        self.btn_Panda = Button(self.window, text = "Panda!", bg = "#8cc45c", command = self.pandaColor)
-        self.btn_Sheep['font'] = self.critterFont
-        self.btn_Duck['font'] = self.critterFont
-        self.btn_Panda['font'] = self.critterFont
+        self.btn_Sheep = Button(self.window, text = "Sheep!", font = self.critterFont, bg = "#8cc45c", command = self.sheepColor)
+        self.btn_Duck = Button(self.window, text = "Duck!", font = self.critterFont, bg = "#8cc45c", command = self.duckColor)
+        self.btn_Panda = Button(self.window, text = "Panda!", font = self.critterFont, bg = "#8cc45c", command = self.pandaColor)
 
         ## Make Radio Buttons to select color per critter
         self.colorchoice = IntVar()
-        self.rbPandaWhite = Radiobutton(self.window, text = "White", variable = self.colorchoice, value = 1)
-        self.rbPandaPink = Radiobutton(self.window, text = "Pink", variable = self.colorchoice, value = 2)
-        self.rbPandaRed = Radiobutton(self.window, text = "Red", variable = self.colorchoice, value = 3)
+        self.rbPandaWhite = Radiobutton(self.window, text = "White", font = self.critterFont, variable = self.colorchoice, value = 1)
+        self.rbPandaPink = Radiobutton(self.window, text = "Pink", font = self.critterFont, variable = self.colorchoice, value = 2)
+        self.rbPandaRed = Radiobutton(self.window, text = "Red", font = self.critterFont, variable = self.colorchoice, value = 3)
 
-        self.rbSheepWhite = Radiobutton(self.window, text = "White", variable = self.colorchoice, value = 1)
-        self.rbSheepPink = Radiobutton(self.window, text = "Pink", variable = self.colorchoice, value = 2)
-        self.rbSheepBlack = Radiobutton(self.window, text = "Black", variable = self.colorchoice, value = 3)
+        self.rbSheepWhite = Radiobutton(self.window, text = "White", font = self.critterFont, variable = self.colorchoice, value = 1)
+        self.rbSheepPink = Radiobutton(self.window, text = "Pink", font = self.critterFont, variable = self.colorchoice, value = 2)
+        self.rbSheepBlack = Radiobutton(self.window, text = "Black", font = self.critterFont, variable = self.colorchoice, value = 3)
 
-        self.rbDuckWhite = Radiobutton(self.window, text = "White", variable = self.colorchoice, value = 1)
-        self.rbDuckYellow = Radiobutton(self.window, text = "Yellow", variable = self.colorchoice, value = 2)
-        self.rbDuckPink = Radiobutton(self.window, text = "Pink", variable = self.colorchoice, value = 3)
+        self.rbDuckWhite = Radiobutton(self.window, text = "White", font = self.critterFont, variable = self.colorchoice, value = 1)
+        self.rbDuckYellow = Radiobutton(self.window, text = "Yellow", font = self.critterFont, variable = self.colorchoice, value = 2)
+        self.rbDuckPink = Radiobutton(self.window, text = "Pink", font = self.critterFont, variable = self.colorchoice, value = 3)
 
         ## Button to confirm color select
-        self.btn_confirmColor = Button(self.window, text = "Confirm!", bg = "#8cc45c", command = self.confirmColor)
+        self.btn_confirmColor = Button(self.window, text = "Confirm!", font = self.critterFont, bg = "#8cc45c", command = self.confirmColor)
         
         ## Make a back button
-        self.btn_back = Button(self.window, text = "Back", bg = "#8cc45c", command = self.createCritter) 
+        self.btn_back = Button(self.window, text = "Back", font = self.critterFont, bg = "#8cc45c", command = self.createCritter) 
 
         ## Make a text entry field
         self.critterNameEntry = Entry(self.window, textvariable = self.critterName)
 
         ## Button to confirm name
-        self.getName = Button(self.window, text = "Confirm Name", bg = "#8cc45c", command = self.namePress)
+        self.getName = Button(self.window, text = "Confirm Name", font = self.critterFont, bg = "#8cc45c", command = self.namePress)
         
         ## Creating an action button, text based on the font settings defined earlier
-        self.btn_next = Button(self.window, text = "Create Your Critter!", bg = "#8cc45c", command = self.createCritter)
-        self.btn_next['font'] = self.critterFont
+        self.btn_next = Button(self.window, text = "Create Your Critter!", font = self.critterFont, bg = "#8cc45c", command = self.createCritter)
+
+        self.gotoHubBtn = Button(self.window, text = "Confirm Name", font = self.critterFont, bg = "#8cc45c", command = self.goHub)
         
         ## Add button to the canvas
         self.canvas.create_window(400, 600, window = self.btn_next)
@@ -296,9 +297,27 @@ class crittercraft():
         self.canvas.create_text(400, 75, text = f"{self.yourCritterName}", font = "Helvetica 30")
 
         ## Display the critter you chose
-        self.canvas.create_image(400, 300, image = self.yourCritter)
+        self.canvas.create_image(400, 475, image = self.yourCritter)
+
+        self.canvas.create_window(400, 700, window = self.gotoHubBtn)
 
         self.canvas.create_window(100, 100, window = self.btn_back)
 
+    def goHub(self):
+        ## Clear the screen
+        self.canvas.delete("all")
+        self.canvas.create_image(400, 400, image = self.bg_default)
+
+        ## Create a header rectangle
+        self.canvas.create_rectangle(0, 0, 800, 150, fill = "#8cc45c")
+
+        ## Fill attributes in the rectangle
+        self.canvas.create_text(400, 40, text = f"{self.yourCritterName}", font = "Helvetica 30")
+        self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20")
+        self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20")
+        self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20")
+
+        self.canvas.create_image(400, 475, image = self.yourCritter)
+        
 
 crittercraft()
