@@ -1,19 +1,19 @@
-import random
 import tkinter as tk
 from tkinter import messagebox
+import random
 
 
-class NumberGuessingGame:
+class HeartGuessing:
     def __init__(self, master):
         self.master = master
-        self.master.title("Guess the Number Game")
+        self.master.title("Number of Hearts")
 
         self.secret_number = random.randint(1, 10)
-        print(self.secret_number)
         self.attempts = 0
-        self.max_attempts = 3
+        self.no_of_attempts = 5
 
-        self.label = tk.Label(master, text="Enter your guess (1-10):")
+        self.label = tk.Label(
+            master, text="Enter your guess for the number of hearts (enter a number from 1-10):")
         self.label.pack()
 
         self.entry = tk.Entry(master)
@@ -34,22 +34,22 @@ class NumberGuessingGame:
         self.attempts += 1
 
         if guess == self.secret_number:
-            messagebox.showinfo(message = f"Congratulations You guessed the number {self.secret_number} in {self.attempts} attempts.")
+            messagebox.showinfo(message=f"Congratulations, you guessed correctly! You gained {
+                                self.secret_number} hearts in {self.attempts} attempts.")
             self.master.destroy()
-            exit()
         elif guess < self.secret_number:
             messagebox.showinfo("Incorrect", "Try again. Go higher.")
         else:
             messagebox.showinfo("Incorrect", "Try again. Go lower.")
 
-        if self.attempts == self.max_attempts:
-            messagebox.showinfo(message = f"Game Over, Sorry, you've run out of attempts. The correct number was {self.secret_number}.")
+        if self.attempts == self.no_of_attempts:
+            messagebox.showinfo(message=f"Game Over! Sorry, you've run out of attempts. The correct number of hearts was" {self.secret_number}.)
             self.master.destroy()
 
 
 def main():
     root = tk.Tk()
-    game = NumberGuessingGame(root)
+    game = HeartGuessing(root)
     root.mainloop()
 
 
