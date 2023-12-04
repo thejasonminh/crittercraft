@@ -6,14 +6,15 @@ from tkinter import messagebox
 class NumberGuessingGame:
     def __init__(self, master):
         self.master = master
-        self.master.title("Guess the Number Game")
+        self.master.title("Guess the Number of Hearts Game")
 
         self.secret_number = random.randint(1, 10)
         print(self.secret_number)
         self.attempts = 0
-        self.max_attempts = 3
+        self.no_of_attempts = 3
 
-        self.label = tk.Label(master, text="Enter your guess (1-10):")
+        self.label = tk.Label(
+            master, text="Enter your guess for the number of hearts ❤️ (enter a number from 1-10):")
         self.label.pack()
 
         self.entry = tk.Entry(master)
@@ -34,7 +35,7 @@ class NumberGuessingGame:
         self.attempts += 1
 
         if guess == self.secret_number:
-            messagebox.showinfo(message = f"Congratulations You guessed the number {self.secret_number} in {self.attempts} attempts.")
+            messagebox.showinfo(message=f"Congratulations You guessed {self.secret_number} number of hearts in {self.attempts} attempts. You earned 1 ❤️")
             self.master.destroy()
             exit()
         elif guess < self.secret_number:
@@ -42,8 +43,8 @@ class NumberGuessingGame:
         else:
             messagebox.showinfo("Incorrect", "Try again. Go lower.")
 
-        if self.attempts == self.max_attempts:
-            messagebox.showinfo(message = f"Game Over, Sorry, you've run out of attempts. The correct number was {self.secret_number}.")
+        if self.attempts == self.no_of_attempts:
+            messagebox.showinfo(message=f"Sorry, you've out of attempts. The correct number of hearts was {self.secret_number} ❤️.")
             self.master.destroy()
 
 
