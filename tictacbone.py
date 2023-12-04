@@ -14,14 +14,14 @@ class TicTacBoneGUI:
         # Initialize list to store buttons
         self.buttons = [[None, None, None], [
             None, None, None], [None, None, None]]
-        # ADD COMMENT
+        # The current player is 'X'
         self.current_player = "X"
+        # Store game outcome to 0 for on-going
         self.outcome = 0
 
-        # ADD COMMENT
+        # Create buttons for the 3 by 3 tictacbone grid
         for i in range(3):
             for j in range(3):
-                # Create buttons for tictacbone grid
                 self.buttons[i][j] = tk.Button(self.window, text="", font=("Arial", 24),
                                                width=5, height=2, command=lambda row=i, column=j: self.on_click(row, column))
                 # Put buttons in the grid
