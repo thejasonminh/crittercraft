@@ -9,6 +9,7 @@
 from tkinter import * # Import tkinter
 from pathlib import Path 
 import tkinter.font as font
+import threading
 
 p = Path(__file__)
 print(p.parent)
@@ -176,7 +177,7 @@ class crittercraft():
 
         self.canvas.create_window(400, 700, window = self.btn_confirmColor)
 
-        self.canvas.create_window(100, 100, window = self.btn_back)
+        self.canvas.create_window(100, 75, window = self.btn_back)
     
     def sheepColor(self):
         ## Assign critter type
@@ -202,7 +203,7 @@ class crittercraft():
 
         self.canvas.create_window(400, 700, window = self.btn_confirmColor)
 
-        self.canvas.create_window(100, 100, window = self.btn_back)
+        self.canvas.create_window(100, 75, window = self.btn_back)
 
     def duckColor(self):
         ## Assign critter type
@@ -228,7 +229,7 @@ class crittercraft():
 
         self.canvas.create_window(400, 700, window = self.btn_confirmColor)
 
-        self.canvas.create_window(100, 100, window = self.btn_back)
+        self.canvas.create_window(100, 75, window = self.btn_back)
 
     def confirmColor(self):
         if self.critterType == "Panda":
@@ -281,7 +282,7 @@ class crittercraft():
         ## Add button to confirm
         self.canvas.create_window(400, 700, window = self.getName)
 
-        self.canvas.create_window(100, 100, window = self.btn_back)
+        self.canvas.create_window(100, 75, window = self.btn_back)
 
     def namePress(self):
         ## Clear the screen
@@ -301,7 +302,7 @@ class crittercraft():
 
         self.canvas.create_window(400, 700, window = self.gotoHubBtn)
 
-        self.canvas.create_window(100, 100, window = self.btn_back)
+        self.canvas.create_window(100, 75, window = self.btn_back)
 
     def goHub(self):
         ## Clear the screen
