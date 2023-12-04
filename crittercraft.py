@@ -9,7 +9,10 @@
 from tkinter import * # Import tkinter
 from pathlib import Path 
 import tkinter.font as font
+import time
 import threading
+import random
+import sys
 
 p = Path(__file__)
 print(p.parent)
@@ -81,7 +84,7 @@ class crittercraft():
 
         # Background pictures
         self.bg_default = PhotoImage(file = f"{p.parent}/bg_default.png")
-        # self.bg_death = PhotoImage(file = f"{p.parent}/bg_death.png")
+        self.bg_death = PhotoImage(file = f"{p.parent}/bg_death.png")
         # Resize
         # self.bg_default = self.bg_default.zoom(1)
         # self.bg_default = self.bg_default.subsample(60)
@@ -305,6 +308,10 @@ class crittercraft():
         self.canvas.create_window(100, 75, window = self.btn_back)
 
     def goHub(self):
+        # Internal timer to kill the critter
+        threading.Timer(5.0, self.hubTimer).start()
+
+        ## When hitting a minigame button, call threading.Timer.cancel()
         ## Clear the screen
         self.canvas.delete("all")
         self.canvas.create_image(400, 400, image = self.bg_default)
@@ -314,11 +321,55 @@ class crittercraft():
 
         ## Fill attributes in the rectangle
         self.canvas.create_text(400, 40, text = f"{self.yourCritterName}", font = "Helvetica 30")
-        self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20")
-        self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20")
-        self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20")
+        self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
+        self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
+        self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
 
         self.canvas.create_image(400, 475, image = self.yourCritter)
-        
+
+    # Method that rolls random events designated to lower stats and kill the critter
+    def hubTimer(self):
+        randStat = random.randint(0, 3)
+        print("timer tick")
+        ## Health goes down
+        if randStat == 0:
+            self.critterHealth -= 1
+            self.canvas.delete("hp")
+            self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
+            if self.critterHealth <= 0:
+                self.canvas.delete("all")
+                self.canvas.create_image(400, 400, image = self.bg_death)
+                self.canvas.create_text(400, 400, text = "YOU DIED", font = "Impact 30", fill = "red")
+                time.sleep(5)
+                self.window.destroy()
+                #sys.exit(0)
+            threading.Timer(5.0, self.hubTimer).start()
+        ## Hunger goes down    
+        elif randStat == 1:
+            self.critterHun -= 1
+            self.canvas.delete("hgr")
+            self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
+            if self.critterHun <= 0:
+                self.canvas.delete("all")
+                self.canvas.create_image(400, 400, image = self.bg_death)
+                self.canvas.create_text(400, 400, text = "YOU DIED", font = "Impact 30", fill = "red")
+                time.sleep(5)
+                self.window.destroy()
+                #sys.exit(0)
+            threading.Timer(5.0, self.hubTimer).start()
+        ## Love goes down    
+        elif randStat == 2:
+            self.critterLove -= 1
+            self.canvas.delete("lov")
+            self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
+            if self.critterLove <= 0:
+                self.canvas.delete("all")
+                self.canvas.create_image(400, 400, image = self.bg_death)
+                self.canvas.create_text(400, 400, text = "YOU DIED", font = "Impact 30", fill = "red")
+                time.sleep(5)
+                self.window.destroy()
+                #sys.exit(0)
+            threading.Timer(5.0, self.hubTimer).start()
+
 
 crittercraft()
