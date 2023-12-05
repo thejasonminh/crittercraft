@@ -1,4 +1,4 @@
-import tkinter as tk
+from tkinter import *
 import tkinter.font as font
 from tkinter import messagebox
 import random
@@ -12,63 +12,66 @@ class MemorizationGame:
         self.sequence = []
         self.player_sequence = []
 
-        critterfont = font.Font(family = "Helvetica")
-        critterFont = font.Font(size = 20)
+        self.critterfont = font.Font(family = "Helvetica")
+        self.critterFont = font.Font(size = 20)
         
         # Create labels
-        label_frame = tk.Frame(self.master)
+        label_frame = Frame(self.master)
         label_frame.pack(pady=10)
 
-        self.lbWelcome = tk.Label(label_frame, text="Welcome to Memorize Me!").grid(row=0, column=1)
-        self.lbInstructions = tk.Label(label_frame, text="Press start to see the pattern, memorize and copy it, and click submit.").grid(row=1, column=1)
-        self.lbStatus = tk.Label(label_frame, text="").grid(row=3, column=1)
+        self.lbWelcome = Label(label_frame, text="Welcome to Memorize Me!").grid(row=0, column=1)
+        self.lbInstructions = Label(label_frame, text="Press start to see the pattern, memorize and copy it, and click submit.").grid(row=1, column=1)
+        self.statusVar = StringVar()
+        self.statusVar.set("Press start!")
+        self.lbStatus = Label(label_frame, textvariable = self.statusVar, fg = 'blue').grid(row=3, column=1)
 
         # Create buttons
-        button_frame = tk.Frame(self.master)
+        button_frame = Frame(self.master)
         button_frame.pack(pady=10)
 
         # Up and Down buttons
-        self.btUp = tk.Button(button_frame, text="Up", command=lambda: self.add_to_player_sequence("Up"))
+        self.btUp = Button(button_frame, text="Up", command=lambda: self.add_to_player_sequence("Up"))
         self.btUp.grid(row=0, column=1, pady=5)
-        self.btUp['font'] = critterfont
+        self.btUp['font'] = self.critterfont
 
-        self.btDown = tk.Button(button_frame, text="Down", command=lambda: self.add_to_player_sequence("Down"))
+        self.btDown = Button(button_frame, text="Down", command=lambda: self.add_to_player_sequence("Down"))
         self.btDown.grid(row=2, column=1, pady=5)
-        self.btDown['font'] = critterfont
+        self.btDown['font'] = self.critterfont
 
         # Left and Right buttons
-        self.btLeft = tk.Button(button_frame, text="Left", command=lambda: self.add_to_player_sequence("Left"))
+        self.btLeft = Button(button_frame, text="Left", command=lambda: self.add_to_player_sequence("Left"))
         self.btLeft.grid(row=1, column=0, padx=5)
-        self.btLeft['font'] = critterfont
+        self.btLeft['font'] = self.critterfont
 
-        self.btRight = tk.Button(button_frame, text="Right", command=lambda: self.add_to_player_sequence("Right"))
+        self.btRight = Button(button_frame, text="Right", command=lambda: self.add_to_player_sequence("Right"))
         self.btRight.grid(row=1, column=2, padx=5)
-        self.btRight['font'] = critterfont
+        self.btRight['font'] = self.critterfont
 
         # Start and Submit buttons
-        start_button = tk.Button(button_frame, text="Start", command=self.start_game)
+        start_button = Button(button_frame, text="Start", command=self.start_game)
         start_button.grid(row=1, column=1, pady=10)
-        start_button['font'] = critterfont
+        start_button['font'] = self.critterfont
 
-        submit_button = tk.Button(button_frame, text="Submit Sequence", command=self.check_sequence)
+        submit_button = Button(button_frame, text="Submit Sequence", command=self.check_sequence)
         submit_button.grid(row=3, column=1)
-        submit_button['font'] = critterfont
+        submit_button['font'] = self.critterfont
 
         # Disable buttons initially
         self.disable_buttons()
 
     def disable_buttons(self):
         for direction in ["Left", "Right", "Up", "Down"]:
-            self.get_button(direction).config(state=tk.DISABLED)
+            self.get_button(direction).config(state=DISABLED)
 
     def enable_buttons(self):
         for direction in ["Left", "Right", "Up", "Down"]:
-            self.get_button(direction).config(state=tk.NORMAL)
+            self.get_button(direction).config(state=NORMAL)
 
     def add_to_player_sequence(self, direction):
         self.player_sequence.append(direction)
 
     def start_game(self):
+        self.statusVar.set("Wait and watch... When the pattern finishes, repeat it, and press submit!")
         self.sequence = []
         self.player_sequence = []
         self.disable_buttons()
@@ -96,8 +99,11 @@ class MemorizationGame:
     def check_sequence(self):
         if self.player_sequence == self.sequence:
             messagebox.showinfo("Success", "Correct sequence! You won!")
+            self.master.destroy()
         else:
             messagebox.showerror("Error", "Incorrect sequence. Try again.")
+            self.master.destroy()
+        self.statusVar.set("Press start!")
         self.disable_buttons()
         self.sequence = []
         self.player_sequence = []
@@ -113,6 +119,6 @@ class MemorizationGame:
             return self.btRight
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    root = Tk()
     game = MemorizationGame(root)
     root.mainloop()
