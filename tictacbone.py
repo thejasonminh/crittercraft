@@ -109,16 +109,19 @@ class TicTacBoneGUI:
             # Check for potential win by computer
             if self.winner_check():
                 messagebox.showinfo(title = "TicTacBone", message = "You lost! Play again to earn 🦴")
-                self.game_reset()  # Reset the game
+                self.window.destroy()
+                print(0)
             # Check for a tie
             elif self.tie_check():
                 # Sends message to show tie if result is a tie
                 messagebox.showinfo(title = "TicTacBone", message = "It's a tie! Play again to earn 🦴")
-                self.game_reset()  # Reset the game
+                self.window.destroy()
+                print(0)
             # Else, allow user to conduct their next turn
             else:
                 self.current_player = "X"
                 self.user_turn = True
+                print(1)
 
 
 if __name__ == "__main__":
