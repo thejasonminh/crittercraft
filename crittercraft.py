@@ -8,6 +8,8 @@
 
 from tkinter import * # Import tkinter
 from pathlib import Path 
+import pygame.mixer
+from pygame.locals import *
 import tkinter.font as font
 import time
 import threading
@@ -129,7 +131,9 @@ class crittercraft():
         self.btn_next = Button(self.window, text = "Create Your Critter!", font = self.critterFont, bg = "#8cc45c", command = self.createCritter)
 
         self.gotoHubBtn = Button(self.window, text = "Confirm Name", font = self.critterFont, bg = "#8cc45c", command = self.goHub)
-        
+    
+        self.restartGame = Button(self.window, text = "Restart Game", font = self.critterFont, bg = "#8cc45c", command = self.resetGame)
+
         ## Add button to the canvas
         self.canvas.create_window(400, 600, window = self.btn_next)
 
@@ -310,6 +314,9 @@ class crittercraft():
     def goHub(self):
         # Internal timer to kill the critter
         threading.Timer(5.0, self.hubTimer).start()
+        pygame.mixer.init()
+        pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
+        pygame.mixer.music.play(loops = 2)
 
         ## When hitting a minigame button, call threading.Timer.cancel()
         ## Clear the screen
@@ -329,7 +336,8 @@ class crittercraft():
 
     # Method that rolls random events designated to lower stats and kill the critter
     def hubTimer(self):
-        randStat = random.randint(0, 3)
+        randStat = random.randint(0, 2)
+        print(randStat)
         print("timer tick")
         ## Health goes down
         if randStat == 0:
@@ -339,10 +347,12 @@ class crittercraft():
             if self.critterHealth <= 0:
                 self.canvas.delete("all")
                 self.canvas.create_image(400, 400, image = self.bg_death)
-                self.canvas.create_text(400, 400, text = "YOU DIED", font = "Impact 30", fill = "red")
-                time.sleep(5)
-                self.window.destroy()
-                #sys.exit(0)
+                self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                self.canvas.create_window(400, 600, window = self.restartGame)
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
+                pygame.mixer.music.play(loops = -1)
+                threading.Timer()_stop()
             threading.Timer(5.0, self.hubTimer).start()
         ## Hunger goes down    
         elif randStat == 1:
@@ -352,10 +362,12 @@ class crittercraft():
             if self.critterHun <= 0:
                 self.canvas.delete("all")
                 self.canvas.create_image(400, 400, image = self.bg_death)
-                self.canvas.create_text(400, 400, text = "YOU DIED", font = "Impact 30", fill = "red")
-                time.sleep(5)
-                self.window.destroy()
-                #sys.exit(0)
+                self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                self.canvas.create_window(400, 600, window = self.restartGame)
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
+                pygame.mixer.music.play(loops = -1)
+                threading.Timer(5.0, self.hubTimer)_stop()
             threading.Timer(5.0, self.hubTimer).start()
         ## Love goes down    
         elif randStat == 2:
@@ -365,11 +377,26 @@ class crittercraft():
             if self.critterLove <= 0:
                 self.canvas.delete("all")
                 self.canvas.create_image(400, 400, image = self.bg_death)
-                self.canvas.create_text(400, 400, text = "YOU DIED", font = "Impact 30", fill = "red")
-                time.sleep(5)
-                self.window.destroy()
-                #sys.exit(0)
+                self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                self.canvas.create_window(400, 600, window = self.restartGame)
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
+                pygame.mixer.music.play(loops = -1)
+                threading.Timer(5.0, self.hubTimer)_stop()
             threading.Timer(5.0, self.hubTimer).start()
 
+    def resetGame(self):
+        pygame.mixer.music.stop()
+        self.critterType = ""
+        self.critterHealth = 2
+        self.critterLove = 2
+        self.critterHun = 2
+        self.critterHealthMax = 3
+        self.critterLoveMax = 3
+        self.critterHunMax = 3
+        self.yourCritterName = ""
+        self.yourCritter = ""
+        self.createCritter()
 
+        self.canvas.destroy()
 crittercraft()
