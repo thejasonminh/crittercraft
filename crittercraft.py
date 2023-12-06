@@ -137,6 +137,10 @@ class crittercraft():
         ## Add button to the canvas
         self.canvas.create_window(400, 600, window = self.btn_next)
 
+        ## Make buttons to Care or Play with pet
+        self.btn_care = Button(self.window, text = "Care", font = self.critterFont, bg = "#8cc45c", command = self.openCareWindow)
+        self.btn_play = Button(self.window, text = "Play", font = self.critterFont, bg = "#8cc45c", command = self.openPlayWindow)
+
         self.window.mainloop()
 
     ## Method that represents the next screen
@@ -334,6 +338,66 @@ class crittercraft():
         self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
 
         self.canvas.create_image(400, 475, image = self.yourCritter)
+
+        self.canvas.create_window(200, 600, window = self.btn_care)
+        self.canvas.create_window(600, 600, window = self.btn_play)
+
+    def openCareWindow(self):
+        print("Care button pressed")
+        careWindow = Toplevel(self.window)
+        careWindow.title("Care")
+        careWindow.geometry("200x100")
+        framecare = Frame(careWindow) # Create and add a frame to window
+        framecare.pack()
+        btHealth = Button(framecare, text = "Clean", command=self.care(1, careWindow))
+        btHealth.grid(row = 1, column = 1)
+        btHunger = Button(framecare, text = "Feed", command=self.care(2, careWindow))
+        btHunger.grid(row = 2, column = 1)
+        btLove = Button(framecare, text = "Cuddle", command=self.care(3, careWindow))
+        btLove.grid(row = 3, column = 1)
+
+    def care(self, num, window):
+        if num == 1:
+            if self.critterHealth < self.critterHealthMax:
+                self.critterHealth += 1
+            else:
+                None
+        elif num == 2: 
+            if self.critterHun < self.critterHunMax:
+                self.critterHun += 1
+            else:
+                None
+        elif num == 3:
+            if self.critterLove < self.critterLoveMax:
+                self.critterLove += 1
+            else:
+                None
+        self.goHub()
+
+    def openPlayWindow(self):
+        gameswindow = Toplevel(self.window)
+        gameswindow.title("Play")
+        gameswindow.geometry("200x100")
+        framegames = Frame(gameswindow) # Create and add a frame to window
+        framegames.pack()
+        btMem = Button(framegames, text = "Memorize Me!", 
+                       command = self.game(1, gameswindow))
+        btMem.grid(row = 1, column = 1)
+        btTic = Button(framegames, text = "Tic Tac Bone!", 
+                       command = self.game(2, gameswindow))
+        btTic.grid(row = 2, column = 1)
+        btGuess = Button(framegames, text = "Guess the love!", 
+                         command = self.game(3, gameswindow))
+        btGuess.grid(row = 3, column = 1)
+    
+    def game(self, num, window):
+        window.destroy()
+        if num == 1:
+            print("Memorization game")
+        elif num == 2:
+            print("Bone game")
+        elif num == 3:
+            print("Love game")
 
     # Method that rolls random events designated to lower stats and kill the critter
     def hubTimer(self):
