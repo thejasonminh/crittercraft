@@ -28,12 +28,12 @@ class crittercraft():
         ## Initializing attributes for critter
         self.critterName = StringVar()
         self.critterType = ""
-        self.critterHealth = 2
-        self.critterLove = 2
-        self.critterHun = 2
-        self.critterHealthMax = 3
-        self.critterLoveMax = 3
-        self.critterHunMax = 3
+        self.critterHealth = 3
+        self.critterLove = 3
+        self.critterHun = 3
+        self.critterHealthMax = 4
+        self.critterLoveMax = 4
+        self.critterHunMax = 4
         self.yourCritterName = ""
         self.yourCritter = ""
 
@@ -313,7 +313,8 @@ class crittercraft():
 
     def goHub(self):
         # Internal timer to kill the critter
-        threading.Timer(5.0, self.hubTimer).start()
+        internal_timer = threading.Timer(5.0, self.hubTimer)
+        internal_timer.start()
         pygame.mixer.init()
         pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
         pygame.mixer.music.play(loops = 2)
@@ -336,6 +337,7 @@ class crittercraft():
 
     # Method that rolls random events designated to lower stats and kill the critter
     def hubTimer(self):
+        internal_timer = threading.Timer(5.0, self.hubTimer)
         randStat = random.randint(0, 2)
         print(randStat)
         print("timer tick")
@@ -352,8 +354,8 @@ class crittercraft():
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                 pygame.mixer.music.play(loops = -1)
-                threading.Timer()_stop()
-            threading.Timer(5.0, self.hubTimer).start()
+                internal_timer.cancel()
+            internal_timer.start()
         ## Hunger goes down    
         elif randStat == 1:
             self.critterHun -= 1
@@ -367,8 +369,8 @@ class crittercraft():
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                 pygame.mixer.music.play(loops = -1)
-                threading.Timer(5.0, self.hubTimer)_stop()
-            threading.Timer(5.0, self.hubTimer).start()
+                internal_timer.cancel()
+            internal_timer.start()
         ## Love goes down    
         elif randStat == 2:
             self.critterLove -= 1
@@ -382,21 +384,20 @@ class crittercraft():
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                 pygame.mixer.music.play(loops = -1)
-                threading.Timer(5.0, self.hubTimer)_stop()
-            threading.Timer(5.0, self.hubTimer).start()
+                internal_timer.cancel()
+            internal_timer.start()
 
     def resetGame(self):
         pygame.mixer.music.stop()
         self.critterType = ""
-        self.critterHealth = 2
-        self.critterLove = 2
-        self.critterHun = 2
-        self.critterHealthMax = 3
-        self.critterLoveMax = 3
-        self.critterHunMax = 3
+        self.critterHealth = 3
+        self.critterLove = 3
+        self.critterHun = 3
+        self.critterHealthMax = 4
+        self.critterLoveMax = 4
+        self.critterHunMax = 4
         self.yourCritterName = ""
         self.yourCritter = ""
         self.createCritter()
 
-        self.canvas.destroy()
 crittercraft()
