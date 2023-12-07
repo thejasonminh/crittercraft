@@ -312,12 +312,19 @@ class crittercraft():
         self.canvas.create_window(100, 75, window = self.btn_back)
 
     def goHub(self):
-        # Internal timer to kill the critter
-        internal_timer = threading.Timer(5.0, self.hubTimer)
-        internal_timer.start()
+        internal_timer1 = threading.Timer(5.0, self.hubTimer)
+        internal_timer1.start()
+
+        ## Load music, and play it.
         pygame.mixer.init()
         pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
-        pygame.mixer.music.play(loops = 2)
+        pygame.mixer.music.play(loops = -1)
+
+        ## Play emergency music if critter is about to die
+        if self.critterHealth == 1 or self.critterHun == 1 or self.critterLove == 1:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
+            pygame.mixer.music.play(Loops = -1)
 
         ## When hitting a minigame button, call threading.Timer.cancel()
         ## Clear the screen
@@ -337,13 +344,18 @@ class crittercraft():
 
     # Method that rolls random events designated to lower stats and kill the critter
     def hubTimer(self):
-        internal_timer = threading.Timer(5.0, self.hubTimer)
+        internal_timer2 = threading.Timer(5.0, self.hubTimer)
+
         randStat = random.randint(0, 2)
         print(randStat)
         print("timer tick")
         ## Health goes down
         if randStat == 0:
             self.critterHealth -= 1
+            if self.critterHealth == 1:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
+                pygame.mixer.music.play(loops = -1)
             self.canvas.delete("hp")
             self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
             if self.critterHealth <= 0:
@@ -354,11 +366,15 @@ class crittercraft():
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                 pygame.mixer.music.play(loops = -1)
-                internal_timer.cancel()
-            internal_timer.start()
+                internal_timer2.cancel()
+            internal_timer2.start()
         ## Hunger goes down    
         elif randStat == 1:
             self.critterHun -= 1
+            if self.critterHun == 1:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
+                pygame.mixer.music.play(loops = -1)
             self.canvas.delete("hgr")
             self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
             if self.critterHun <= 0:
@@ -369,11 +385,16 @@ class crittercraft():
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                 pygame.mixer.music.play(loops = -1)
-                internal_timer.cancel()
-            internal_timer.start()
+                internal_timer2.cancel()
+            internal_timer2.start()
         ## Love goes down    
         elif randStat == 2:
             self.critterLove -= 1
+            ## Play emergency music if critter is about to die
+            if self.critterLove == 1:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
+                pygame.mixer.music.play(loops = -1)
             self.canvas.delete("lov")
             self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
             if self.critterLove <= 0:
@@ -384,8 +405,8 @@ class crittercraft():
                 pygame.mixer.music.stop()
                 pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                 pygame.mixer.music.play(loops = -1)
-                internal_timer.cancel()
-            internal_timer.start()
+                internal_timer2.cancel()
+            internal_timer2.start()
 
     def resetGame(self):
         pygame.mixer.music.stop()
