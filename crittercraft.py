@@ -37,6 +37,9 @@ class crittercraft():
         self.yourCritterName = ""
         self.yourCritter = ""
 
+        # Flag to activate internal timer. 0 = run, 1 = stop
+        self.activeTimer = 0
+
         ## Creating font settings 
         self.critterFont = font.Font(family = "Helvetica")
         self.critterFont = font.Font(size = 30)
@@ -319,6 +322,8 @@ class crittercraft():
         internal_timer1 = threading.Timer(5.0, self.hubTimer)
         internal_timer1.start()
 
+        self.activeTimer = 0
+
         ## Load music, and play it.
         pygame.mixer.init()
         pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
@@ -350,6 +355,7 @@ class crittercraft():
         self.canvas.create_window(600, 600, window = self.btn_play)
 
     def openCareWindow(self):
+        self.activeTimer = 1
         print("Care button pressed")
         careWindow = Toplevel(self.window)
         careWindow.title("Care")
@@ -365,21 +371,26 @@ class crittercraft():
 
     def care(self, num, window):
         if num == 1:
+            print("hp care")
             if self.critterHealth < self.critterHealthMax:
                 self.critterHealth += 1
+                #self.goHub()
             else:
                 None
         elif num == 2: 
+            print("hgr care")
             if self.critterHun < self.critterHunMax:
                 self.critterHun += 1
+                #self.goHub()
             else:
                 None
         elif num == 3:
+            print("lov care")
             if self.critterLove < self.critterLoveMax:
                 self.critterLove += 1
+                #self.goHub()
             else:
                 None
-        self.goHub()
 
     def openPlayWindow(self):
         gameswindow = Toplevel(self.window)
@@ -410,66 +421,70 @@ class crittercraft():
     def hubTimer(self):
         internal_timer2 = threading.Timer(5.0, self.hubTimer)
 
-        randStat = random.randint(0, 2)
-        print(randStat)
-        print("timer tick")
-        ## Health goes down
-        if randStat == 0:
-            self.critterHealth -= 1
-            if self.critterHealth == 1:
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
-                pygame.mixer.music.play(loops = -1)
-            self.canvas.delete("hp")
-            self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
-            if self.critterHealth <= 0:
-                self.canvas.delete("all")
-                self.canvas.create_image(400, 400, image = self.bg_death)
-                self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
-                self.canvas.create_window(400, 600, window = self.restartGame)
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
-                pygame.mixer.music.play(loops = -1)
-                internal_timer2.cancel()
-            internal_timer2.start()
-        ## Hunger goes down    
-        elif randStat == 1:
-            self.critterHun -= 1
-            if self.critterHun == 1:
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
-                pygame.mixer.music.play(loops = -1)
-            self.canvas.delete("hgr")
-            self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
-            if self.critterHun <= 0:
-                self.canvas.delete("all")
-                self.canvas.create_image(400, 400, image = self.bg_death)
-                self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
-                self.canvas.create_window(400, 600, window = self.restartGame)
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
-                pygame.mixer.music.play(loops = -1)
-                internal_timer2.cancel()
-            internal_timer2.start()
-        ## Love goes down    
-        elif randStat == 2:
-            self.critterLove -= 1
-            ## Play emergency music if critter is about to die
-            if self.critterLove == 1:
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
-                pygame.mixer.music.play(loops = -1)
-            self.canvas.delete("lov")
-            self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
-            if self.critterLove <= 0:
-                self.canvas.delete("all")
-                self.canvas.create_image(400, 400, image = self.bg_death)
-                self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
-                self.canvas.create_window(400, 600, window = self.restartGame)
-                pygame.mixer.music.stop()
-                pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
-                pygame.mixer.music.play(loops = -1)
-                internal_timer2.cancel()
+        if self.activeTimer == 0:
+            randStat = random.randint(0, 2)
+            print(randStat)
+            print("timer tick")
+            ## Health goes down
+            if randStat == 0:
+                self.critterHealth -= 1
+                if self.critterHealth == 1:
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
+                    pygame.mixer.music.play(loops = -1)
+                self.canvas.delete("hp")
+                self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
+                if self.critterHealth <= 0:
+                    self.canvas.delete("all")
+                    self.canvas.create_image(400, 400, image = self.bg_death)
+                    self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                    self.canvas.create_window(400, 600, window = self.restartGame)
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
+                    pygame.mixer.music.play(loops = -1)
+                    internal_timer2.cancel()
+                internal_timer2.start()
+            ## Hunger goes down    
+            elif randStat == 1:
+                self.critterHun -= 1
+                if self.critterHun == 1:
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
+                    pygame.mixer.music.play(loops = -1)
+                self.canvas.delete("hgr")
+                self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
+                if self.critterHun <= 0:
+                    self.canvas.delete("all")
+                    self.canvas.create_image(400, 400, image = self.bg_death)
+                    self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                    self.canvas.create_window(400, 600, window = self.restartGame)
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
+                    pygame.mixer.music.play(loops = -1)
+                    internal_timer2.cancel()
+                internal_timer2.start()
+            ## Love goes down    
+            elif randStat == 2:
+                self.critterLove -= 1
+                ## Play emergency music if critter is about to die
+                if self.critterLove == 1:
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(f"{p.parent}/hub-emergency-music.mp3")
+                    pygame.mixer.music.play(loops = -1)
+                self.canvas.delete("lov")
+                self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
+                if self.critterLove <= 0:
+                    self.canvas.delete("all")
+                    self.canvas.create_image(400, 400, image = self.bg_death)
+                    self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                    self.canvas.create_window(400, 600, window = self.restartGame)
+                    pygame.mixer.music.stop()
+                    pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
+                    pygame.mixer.music.play(loops = -1)
+                    internal_timer2.cancel()
+                internal_timer2.start()
+        else:
+            print("timer inactive")
             internal_timer2.start()
 
     def resetGame(self):
