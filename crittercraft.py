@@ -145,9 +145,6 @@ class crittercraft():
         self.btn_care = Button(self.window, text = "Care", font = self.critterFont, bg = "#8cc45c", command = self.openCareWindow)
         self.btn_play = Button(self.window, text = "Play", font = self.critterFont, bg = "#8cc45c", command = self.openPlayWindow)
 
-        # Game outcome value
-        self.gameOutcome = 0
-
         self.window.mainloop()
 
     ## Method that represents the next screen
@@ -433,35 +430,15 @@ class crittercraft():
         pygame.mixer.music.stop()
         pygame.mixer.music.load(f"{p.parent}/minigame-music.mp3")
         pygame.mixer.music.play(loops = -1)
-        self.gameOutcome = 0
         if num == 1:
             print("Memorization game")
             self.memGame()
-            print(f"outcome: {self.gameOutcome}")
-            if self.gameOutcome == 1:
-                self.critterHealthMax += 1
-                self.canvas.delete("hp")
-                self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
         elif num == 2:
             print("Bone game")
             self.boneGame()
-            if self.gameOutcome == 1:
-                self.critterHunMax += 1
-                self.canvas.delete("hgr")
-                self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
         elif num == 3:
             print("Love game")
             self.loveGame()
-            if self.gameOutcome == 1:
-                self.critterLoveMax += 1
-                self.canvas.delete("lov")
-                self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
-        window.destroy()
-        self.activeTimer = 0
-        self.gameOutcome = 0
-        pygame.mixer.music.stop()
-        pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
-        pygame.mixer.music.play(loops = -1)
 
     def memGame(self):
         print(self.gameOutcome)
@@ -565,8 +542,9 @@ class crittercraft():
                 if self.player_sequence == self.sequence:
                     messagebox.showinfo("Success", "Correct sequence! You won! Health max will increase by 1.")
                     print(3)
-                    crittercraft.gameOutcome = 1
-                    print(f"Game won. Outcome points: {crittercraft.gameOutcome}")
+                    crittercraft.critterHealthMax += 1
+                    crittercraft.canvas.delete("hp")
+                    crittercraft.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
                     self.master.destroy()
                 else:
                     messagebox.showerror("Error", "Incorrect sequence. Try again next time.")
@@ -587,6 +565,10 @@ class crittercraft():
                     return self.btRight
 
         MemorizationGame()
+        self.activeTimer = 0
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
+        pygame.mixer.music.play(loops = -1)
 
     def boneGame(self):
         class TicTacBoneGUI:
@@ -630,7 +612,9 @@ class crittercraft():
                     if self.winner_check():
                         # Sends message to show win if player wins
                         messagebox.showinfo(title = "TicTacBone", message = "Congratulations, you won! Hunger max will increase by 1.")
-                        crittercraft.gameOutcome = 1
+                        crittercraft.critterHunMax += 1
+                        crittercraft.canvas.delete("hgr")
+                        crittercraft.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
                         self.window.destroy() 
                     elif self.tie_check():
                         # Sends message to show tie if result is a tie
@@ -702,6 +686,10 @@ class crittercraft():
                         self.current_player = "X"
                         self.user_turn = True
         TicTacBoneGUI()
+        self.activeTimer = 0
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
+        pygame.mixer.music.play(loops = -1)
 
     def loveGame(self):
         class HeartGuessing:
@@ -745,7 +733,9 @@ class crittercraft():
                 if guess == self.no_of_hearts:
                     # Display message to inform win if user guesses correctly
                     messagebox.showinfo(message=f"Congratulations You guessed {self.no_of_hearts} number of hearts in {self.attempts} attempts. You win! Love max will increase by 1.")
-                    crittercraft.gameOutcome = 1
+                    crittercraft.critterLoveMax += 1
+                    crittercraft.canvas.delete("lov")
+                    crittercraft.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
                     self.master.destroy()
                     exit()
                 elif guess < self.no_of_hearts:
@@ -761,6 +751,10 @@ class crittercraft():
                     self.master.destroy()
         
         HeartGuessing()
+        self.activeTimer = 0
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
+        pygame.mixer.music.play(loops = -1)
 
     # Method that rolls random events designated to lower stats and kill the critter
     def hubTimer(self):
