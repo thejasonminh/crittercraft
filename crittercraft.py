@@ -374,6 +374,10 @@ class crittercraft():
         btLove.grid(row = 3, column = 1)
 
     def care(self, num, window):
+        dying = 0
+        if self.critterHealth < 2 or self.critterHun < 2 or self.critterLove < 2:
+            dying = 1
+
         if num == 1:
             print("hp care")
             if self.critterHealth < self.critterHealthMax:
@@ -401,6 +405,11 @@ class crittercraft():
         
         window.destroy()
         self.activeTimer = 0
+
+        if dying == 1 and self.critterHealth > 1 and self.critterHun > 1 and self.critterLove > 1:
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
+            pygame.mixer.music.play(loops = -1)
 
     def openPlayWindow(self):
         self.activeTimer = 1
@@ -450,6 +459,9 @@ class crittercraft():
         window.destroy()
         self.activeTimer = 0
         self.gameOutcome = 0
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
+        pygame.mixer.music.play(loops = -1)
 
     def memGame(self):
         print(self.gameOutcome)
@@ -747,6 +759,8 @@ class crittercraft():
                     # Display message to inform user if they are out of attempts
                     messagebox.showinfo(message=f"Sorry, you've out of attempts. The correct number of hearts was {self.no_of_hearts} ❤️.")
                     self.master.destroy()
+        
+        HeartGuessing()
 
     # Method that rolls random events designated to lower stats and kill the critter
     def hubTimer(self):
