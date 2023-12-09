@@ -7,6 +7,7 @@
 # Purpose: CritterCraft
 
 from tkinter import * # Import tkinter
+from tkinter import messagebox
 from pathlib import Path 
 import pygame.mixer
 from pygame.locals import *
@@ -143,6 +144,9 @@ class crittercraft():
         ## Make buttons to Care or Play with pet
         self.btn_care = Button(self.window, text = "Care", font = self.critterFont, bg = "#8cc45c", command = self.openCareWindow)
         self.btn_play = Button(self.window, text = "Play", font = self.critterFont, bg = "#8cc45c", command = self.openPlayWindow)
+
+        # Game outcome value
+        self.gameOutcome = 0
 
         self.window.mainloop()
 
@@ -362,11 +366,11 @@ class crittercraft():
         careWindow.geometry("200x100")
         framecare = Frame(careWindow) # Create and add a frame to window
         framecare.pack()
-        btHealth = Button(framecare, text = "Clean", command=self.care(1, careWindow))
+        btHealth = Button(framecare, text = "Clean", command=lambda: self.care(1, careWindow))
         btHealth.grid(row = 1, column = 1)
-        btHunger = Button(framecare, text = "Feed", command=self.care(2, careWindow))
+        btHunger = Button(framecare, text = "Feed", command=lambda: self.care(2, careWindow))
         btHunger.grid(row = 2, column = 1)
-        btLove = Button(framecare, text = "Cuddle", command=self.care(3, careWindow))
+        btLove = Button(framecare, text = "Cuddle", command=lambda: self.care(3, careWindow))
         btLove.grid(row = 3, column = 1)
 
     def care(self, num, window):
@@ -374,48 +378,198 @@ class crittercraft():
             print("hp care")
             if self.critterHealth < self.critterHealthMax:
                 self.critterHealth += 1
-                #self.goHub()
+                self.canvas.delete("hp")
+                self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
             else:
                 None
         elif num == 2: 
             print("hgr care")
             if self.critterHun < self.critterHunMax:
                 self.critterHun += 1
-                #self.goHub()
+                self.canvas.delete("hgr")
+                self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
             else:
                 None
         elif num == 3:
             print("lov care")
             if self.critterLove < self.critterLoveMax:
                 self.critterLove += 1
-                #self.goHub()
+                self.canvas.delete("lov")
+                self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
             else:
                 None
+        
+        window.destroy()
+        self.activeTimer = 0
 
     def openPlayWindow(self):
+        self.activeTimer = 1
         gameswindow = Toplevel(self.window)
         gameswindow.title("Play")
         gameswindow.geometry("200x100")
         framegames = Frame(gameswindow) # Create and add a frame to window
         framegames.pack()
-        btMem = Button(framegames, text = "Memorize Me!", 
-                       command = self.game(1, gameswindow))
+        btMem = Button(framegames, text = "Brain Booster!", 
+                       command = lambda: self.game(1, gameswindow))
         btMem.grid(row = 1, column = 1)
         btTic = Button(framegames, text = "Tic Tac Bone!", 
-                       command = self.game(2, gameswindow))
+                       command = lambda: self.game(2, gameswindow))
         btTic.grid(row = 2, column = 1)
         btGuess = Button(framegames, text = "Guess the love!", 
-                         command = self.game(3, gameswindow))
+                         command = lambda: self.game(3, gameswindow))
         btGuess.grid(row = 3, column = 1)
     
     def game(self, num, window):
         window.destroy()
+        self.gameOutcome = 0
         if num == 1:
             print("Memorization game")
+            self.memGame(window)
+            print(f"outcome: {self.gameOutcome}")
+            if self.gameOutcome == 1:
+                self.critterHealthMax += 1
+                self.canvas.delete("hp")
+                self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
         elif num == 2:
             print("Bone game")
+            if self.gameOutcome == 1:
+                self.critterHunMax += 1
+                self.canvas.delete("hgr")
+                self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
         elif num == 3:
             print("Love game")
+            if self.gameOutcome == 1:
+                self.critterLoveMax += 1
+                self.canvas.delete("lov")
+                self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
+        window.destroy()
+        self.activeTimer = 0
+        self.gameOutcome = 0
+
+    def memGame(self, window):
+        print(self.gameOutcome)
+        class MemorizationGame:
+            def __init__(self):
+                self.master = Toplevel(window)
+                self.master.title("Brain Booster")
+
+                self.outcome = 0
+
+                # Initialize sequences
+                self.sequence = []
+                self.player_sequence = []
+
+                self.critterfont = font.Font(family = "Helvetica")
+                self.critterFont = font.Font(size = 20)
+                
+                # Create labels
+                label_frame = Frame(self.master)
+                label_frame.pack(pady=10)
+
+                self.lbWelcome = Label(label_frame, text="Welcome to Memorize Me!").grid(row=0, column=1)
+                self.lbInstructions = Label(label_frame, text="Press start to see the pattern, memorize and copy it, and click submit.").grid(row=1, column=1)
+                self.statusVar = StringVar()
+                self.statusVar.set("Press start!")
+                self.lbStatus = Label(label_frame, textvariable = self.statusVar, fg = 'blue').grid(row=3, column=1)
+
+                # Create buttons
+                button_frame = Frame(self.master)
+                button_frame.pack(pady=10)
+
+                # Up and Down buttons
+                self.btUp = Button(button_frame, text="Up", command=lambda: self.add_to_player_sequence("Up"))
+                self.btUp.grid(row=0, column=1, pady=5)
+                self.btUp['font'] = self.critterfont
+
+                self.btDown = Button(button_frame, text="Down", command=lambda: self.add_to_player_sequence("Down"))
+                self.btDown.grid(row=2, column=1, pady=5)
+                self.btDown['font'] = self.critterfont
+
+                # Left and Right buttons
+                self.btLeft = Button(button_frame, text="Left", command=lambda: self.add_to_player_sequence("Left"))
+                self.btLeft.grid(row=1, column=0, padx=5)
+                self.btLeft['font'] = self.critterfont
+
+                self.btRight = Button(button_frame, text="Right", command=lambda: self.add_to_player_sequence("Right"))
+                self.btRight.grid(row=1, column=2, padx=5)
+                self.btRight['font'] = self.critterfont
+
+                # Start and Submit buttons
+                start_button = Button(button_frame, text="Start", command=self.start_game)
+                start_button.grid(row=1, column=1, pady=10)
+                start_button['font'] = self.critterfont
+
+                submit_button = Button(button_frame, text="Submit Sequence", command=self.check_sequence)
+                submit_button.grid(row=3, column=1)
+                submit_button['font'] = self.critterfont
+
+                # Disable buttons initially
+                self.disable_buttons()
+                self.master.mainloop()
+
+            def disable_buttons(self):
+                for direction in ["Left", "Right", "Up", "Down"]:
+                    self.get_button(direction).config(state=DISABLED)
+
+            def enable_buttons(self):
+                for direction in ["Left", "Right", "Up", "Down"]:
+                    self.get_button(direction).config(state=NORMAL)
+
+            def add_to_player_sequence(self, direction):
+                self.player_sequence.append(direction)
+
+            def start_game(self):
+                self.statusVar.set("Wait and watch... When the pattern finishes, repeat it, and press submit!")
+                self.sequence = []
+                self.player_sequence = []
+                self.disable_buttons()
+                self.generate_sequence()
+                self.show_sequence()
+                self.enable_buttons()
+
+            def generate_sequence(self):
+                directions = ["Left", "Right", "Up", "Down"]
+                for i in range(5):  # Adjust the number of moves in the sequence as needed
+                    self.sequence.append(random.choice(directions))
+
+            def show_sequence(self):
+                for i, direction in enumerate(self.sequence):
+                    self.master.after(i * 1500, lambda d=direction: self.highlight_button(d))
+                    self.master.after((i + 1) * 1800, self.clear_highlight)
+
+            def highlight_button(self, direction):
+                self.get_button(direction).config(fg="red")
+
+            def clear_highlight(self):
+                for direction in ["Left", "Right", "Up", "Down"]:
+                    self.get_button(direction).config(fg="black")
+
+            def check_sequence(self):
+                if self.player_sequence == self.sequence:
+                    messagebox.showinfo("Success", "Correct sequence! You won!")
+                    print(3)
+                    crittercraft.gameOutcome = 1
+                    print(f"Game won. Outcome points: {crittercraft.gameOutcome}")
+                    self.master.destroy()
+                else:
+                    messagebox.showerror("Error", "Incorrect sequence. Try again next time.")
+                    self.master.destroy()
+                self.statusVar.set("Press start!")
+                self.disable_buttons()
+                self.sequence = []
+                self.player_sequence = []
+
+            def get_button(self, direction):
+                if direction == "Up":
+                    return self.btUp
+                elif direction == "Down":
+                    return self.btDown
+                elif direction == "Left":
+                    return self.btLeft
+                elif direction == "Right":
+                    return self.btRight
+
+        MemorizationGame()
 
     # Method that rolls random events designated to lower stats and kill the critter
     def hubTimer(self):
@@ -501,3 +655,4 @@ class crittercraft():
         self.createCritter()
 
 crittercraft()
+
