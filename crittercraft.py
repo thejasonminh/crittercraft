@@ -421,10 +421,13 @@ class crittercraft():
     
     def game(self, num, window):
         window.destroy()
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(f"{p.parent}/minigame-music.mp3")
+        pygame.mixer.music.play(loops = -1)
         self.gameOutcome = 0
         if num == 1:
             print("Memorization game")
-            self.memGame(window)
+            self.memGame()
             print(f"outcome: {self.gameOutcome}")
             if self.gameOutcome == 1:
                 self.critterHealthMax += 1
@@ -432,12 +435,14 @@ class crittercraft():
                 self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
         elif num == 2:
             print("Bone game")
+            self.boneGame()
             if self.gameOutcome == 1:
                 self.critterHunMax += 1
                 self.canvas.delete("hgr")
                 self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
         elif num == 3:
             print("Love game")
+            self.loveGame()
             if self.gameOutcome == 1:
                 self.critterLoveMax += 1
                 self.canvas.delete("lov")
@@ -446,11 +451,11 @@ class crittercraft():
         self.activeTimer = 0
         self.gameOutcome = 0
 
-    def memGame(self, window):
+    def memGame(self):
         print(self.gameOutcome)
         class MemorizationGame:
             def __init__(self):
-                self.master = Toplevel(window)
+                self.master = Tk()
                 self.master.title("Brain Booster")
 
                 self.outcome = 0
@@ -546,7 +551,7 @@ class crittercraft():
 
             def check_sequence(self):
                 if self.player_sequence == self.sequence:
-                    messagebox.showinfo("Success", "Correct sequence! You won!")
+                    messagebox.showinfo("Success", "Correct sequence! You won! Health max will increase by 1.")
                     print(3)
                     crittercraft.gameOutcome = 1
                     print(f"Game won. Outcome points: {crittercraft.gameOutcome}")
@@ -570,6 +575,178 @@ class crittercraft():
                     return self.btRight
 
         MemorizationGame()
+
+    def boneGame(self):
+        class TicTacBoneGUI:
+            def __init__(self):  # Set up intial state of tictacbone
+                self.window = Tk()  # Create a window
+                self.window.title("Tic-Tac-Bone")  # Set window title
+
+                # Initialize the tictacbone board as a 3 by 3 grid
+                self.board = [["", "", ""], ["", "", ""], ["", "", ""]]
+                # Initialize list to store buttons
+                self.buttons = [[None, None, None], [
+                    None, None, None], [None, None, None]]
+                # The current player is 'X'
+                self.current_player = "X"
+                # Store game outcome to 0 for on-going
+                self.outcome = 0
+
+                # Create buttons for the 3 by 3 tictacbone grid
+                for i in range(3):
+                    for j in range(3):
+                        self.buttons[i][j] = Button(self.window, text="", font=("Arial", 24),
+                                                    width=5, height=2, command=lambda row=i, column=j: self.on_click(row, column))
+                        # Put buttons in the grid
+                        self.buttons[i][j].grid(row=i, column=j)
+
+                self.computer = "O"  # Initalize symbol for computer
+                self.user_turn = True  # Track whether it is the player's turn
+
+                self.window.mainloop()
+
+            def on_click(self, row, column):
+                # Player's turn when player can click, button is empty, and there is no winner yet
+                if self.user_turn and self.board[row][column] == "" and not self.winner_check():
+                    # Player prevented from playing when computer's turn
+                    self.user_turn = False
+                    # Update board with the current player's symbol
+                    self.board[row][column] = self.current_player
+                    # Update onto the corresponding button on the board
+                    self.button_update(row, column)
+
+                    if self.winner_check():
+                        # Sends message to show win if player wins
+                        messagebox.showinfo(title = "TicTacBone", message = "Congratulations, you won! Hunger max will increase by 1.")
+                        crittercraft.gameOutcome = 1
+                        self.window.destroy() 
+                    elif self.tie_check():
+                        # Sends message to show tie if result is a tie
+                        messagebox.showinfo(title = "TicTacBone", message = "It's a tie! Try again next time.")
+                        self.window.destroy()
+                    else:
+                        self.current_player = self.computer  # If it is currently the computer's turn
+                        self.computer_turn()  # And allow computer to make computer's move
+
+            def button_update(self, row, column):
+                # Change symbols to bone and paw
+                symbol = "🦴" if self.current_player == "X" else "🐾"
+                # Update button and disable it
+                self.buttons[row][column].config(text=symbol, state=DISABLED)
+
+            def winner_check(self):
+                for i in range(3):
+                    # Horizontal: check if all symbols in the current row are the same and not empty
+                    if self.board[i][0] == self.board[i][1] == self.board[i][2] != "":
+                        return True  # TRUE if row has the same elements and is not empty
+
+                    # Vertical: check if all symbols in the current column are the same and not empty
+                    if self.board[0][i] == self.board[1][i] == self.board[2][i] != "":
+                        return True  # TRUE if column has the same elements and is not empty
+
+                # Diagonal: check if all symbols top-left to bottom-right are the same and not empty
+                if self.board[0][0] == self.board[1][1] == self.board[2][2] != "":
+                    return True  # TRUE if diagonal from top-left to bottom-right has the same elements and is not empty
+
+                # Diagonal: check if all symbols top-right to bottom-left are the same and not empty
+                if self.board[0][2] == self.board[1][1] == self.board[2][0] != "":
+                    return True  # TRUE if diagonal from top-right to bottom-left has the same elements and is not empty
+
+                # If none of the conditions above are met, meaning no one has won, return False
+                return False  # False if there is not a winning condition
+
+            def tie_check(self):
+                # Iterate over rows and columns
+                for i in range(3):
+                    for j in range(3):
+                        if self.board[i][j] == "":  # Check for empty slot
+                            return False  # Game is not a tie if there is an empty slot
+                return True  # Game is a tie if no empty slot are found
+
+            def computer_turn(self):
+                # Look for empty slots in the 3 by 3 grid
+                empty_slot = [(i, j) for i in range(3)
+                            for j in range(3) if self.board[i][j] == ""]
+
+                # Choose empty slot randomly
+                if empty_slot:
+                    row, column = random.choice(empty_slot)
+                    # Place symbol for computer in randomly chosen slot
+                    self.board[row][column] = "O"
+                    # Update onto the corresponding button on the board
+                    self.button_update(row, column)
+
+                    # Check for potential win by computer
+                    if self.winner_check():
+                        messagebox.showinfo(title = "TicTacBone", message = "You lost! Try again next time.")
+                        self.window.destroy()
+                    # Check for a tie
+                    elif self.tie_check():
+                        # Sends message to show tie if result is a tie
+                        messagebox.showinfo(title = "TicTacBone", message = "It's a tie! Try again next time.")
+                        self.window.destroy()
+                    # Else, allow user to conduct their next turn
+                    else:
+                        self.current_player = "X"
+                        self.user_turn = True
+        TicTacBoneGUI()
+
+    def loveGame(self):
+        class HeartGuessing:
+            def __init__(self):
+                # Initalize game
+                self.master = Tk()
+                self.master.title("Guess the Number of Hearts Game")
+
+                # Generate a random number of hearts from 1-10
+                self.no_of_hearts = random.randint(1, 10)
+                self.attempts = 0
+                self.no_of_attempts = 3 # Number of allowed attempts for player
+
+                # Add GUI components
+                self.label = Label(
+                    self.master, text="Enter your guess for the number of hearts ❤️ (enter a number from 1-10):")
+                self.label.pack()
+
+                self.entry = Entry(self.master)
+                self.entry.pack()
+
+                self.guess_button = Button(
+                    self.master, text="Guess", command=self.guess_hearts)
+                self.guess_button.pack()
+
+                self.window.mainloop()
+
+            # Handle the user's guess
+            def guess_hearts(self):
+                try:
+                    guess = int(self.entry.get())
+                    self.check_guess(guess)
+                # Display an error message if the user's input is not a valid number
+                except ValueError:
+                    messagebox.showerror("Error", "Please enter a valid number.")
+
+            # Check the user's guess
+            def check_guess(self, guess):
+                self.attempts += 1
+
+                if guess == self.no_of_hearts:
+                    # Display message to inform win if user guesses correctly
+                    messagebox.showinfo(message=f"Congratulations You guessed {self.no_of_hearts} number of hearts in {self.attempts} attempts. You win! Love max will increase by 1.")
+                    crittercraft.gameOutcome = 1
+                    self.master.destroy()
+                    exit()
+                elif guess < self.no_of_hearts:
+                    # Prompt the user to go higher if the guess is too low
+                    messagebox.showinfo("Incorrect", "Try again. Go higher.")
+                else:
+                    # Prompt the user to go lower if the guess is too high
+                    messagebox.showinfo("Incorrect", "Try again. Go lower.")
+
+                if self.attempts == self.no_of_attempts:
+                    # Display message to inform user if they are out of attempts
+                    messagebox.showinfo(message=f"Sorry, you've out of attempts. The correct number of hearts was {self.no_of_hearts} ❤️.")
+                    self.master.destroy()
 
     # Method that rolls random events designated to lower stats and kill the critter
     def hubTimer(self):
