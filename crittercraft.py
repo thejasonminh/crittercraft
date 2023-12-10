@@ -12,7 +12,6 @@ from pathlib import Path
 import pygame.mixer
 from pygame.locals import *
 import tkinter.font as font
-import time
 import threading
 import random
 import sys
@@ -247,6 +246,7 @@ class crittercraft():
         self.canvas.create_window(100, 75, window = self.btn_back)
 
     def confirmColor(self):
+        ## Confirms the selected colour choice for user's critter
         if self.critterType == "Panda":
             if self.colorchoice.get() == 1:
                 self.yourCritter = self.white_panda
@@ -341,18 +341,25 @@ class crittercraft():
         self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
         self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
 
+        ## Add critter
         self.canvas.create_image(400, 475, image = self.yourCritter)
 
-        self.canvas.create_window(200, 600, window = self.btn_care)
-        self.canvas.create_window(600, 600, window = self.btn_play)
+        ## Add action buttons, Care and Play
+        self.canvas.create_window(200, 650, window = self.btn_care)
+        self.canvas.create_window(600, 650, window = self.btn_play)
 
     def openCareWindow(self):
+        # Stop timer that decreases stats (see hubTimer)
         self.activeTimer = 1
+        
+        # Create new Care window
         careWindow = Toplevel(self.window)
         careWindow.title("Care")
         careWindow.geometry("200x100")
         framecare = Frame(careWindow) # Create and add a frame to window
         framecare.pack()
+
+        # Add 3 action buttons corresponding to methods of increasing stats
         btHealth = Button(framecare, text = "Clean", command=lambda: self.care(1, careWindow))
         btHealth.grid(row = 1, column = 1)
         btHunger = Button(framecare, text = "Feed", command=lambda: self.care(2, careWindow))
@@ -361,10 +368,12 @@ class crittercraft():
         btLove.grid(row = 3, column = 1)
 
     def care(self, num, window):
+        # Recognizes if any of the stats are at 1, which would mean the emergency music is playing so it can be turned off after
         dying = 0
         if self.critterHealth < 2 or self.critterHun < 2 or self.critterLove < 2:
             dying = 1
 
+        # Takes input of which of the 3 buttons were pressed and increases corresponding stat
         if num == 1:
             if self.critterHealth < self.critterHealthMax:
                 self.critterHealth += 1
@@ -387,21 +396,30 @@ class crittercraft():
             else:
                 None
         
+        # Closes window
         window.destroy()
+
+        # Re activate timer 
         self.activeTimer = 0
 
+        # Replace emergency music with regular music
         if dying == 1 and self.critterHealth > 1 and self.critterHun > 1 and self.critterLove > 1:
             pygame.mixer.music.stop()
             pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
             pygame.mixer.music.play(loops = -1)
 
     def openPlayWindow(self):
+        # Stop timer that decreases stats (see hubTimer)
         self.activeTimer = 1
+
+        # Create new Play window
         gameswindow = Toplevel(self.window)
         gameswindow.title("Play")
         gameswindow.geometry("200x100")
         framegames = Frame(gameswindow) # Create and add a frame to window
         framegames.pack()
+
+        # Create buttons for each of the 3 games corresponding to each stat
         btMem = Button(framegames, text = "Brain Booster!", 
                        command = lambda: self.game(1, gameswindow))
         btMem.grid(row = 1, column = 1)
@@ -413,10 +431,15 @@ class crittercraft():
         btGuess.grid(row = 3, column = 1)
     
     def game(self, num, window):
+        # Close play window
         window.destroy()
+        
+        # Play minigame music
         pygame.mixer.music.stop()
         pygame.mixer.music.load(f"{p.parent}/minigame-music.mp3")
         pygame.mixer.music.play(loops = -1)
+
+        # Run respective game that was clicked on
         if num == 1:
             self.memGame()
         elif num == 2:
@@ -425,30 +448,27 @@ class crittercraft():
             self.loveGame()
 
     def memGame(self):
+        # Memorization game, i.e. Brain Booster. User must see, memorize, and repeat a directional sequence to increase the max health stat. 
         critCraft_self = self
+        # Creates a class of the game to be called upon as a GUI
         class MemorizationGame():
             def __init__(self):
                 self.master = Tk()
                 self.master.title("Brain Booster")
 
-                self.outcome = 0
-
                 # Initialize sequences
                 self.sequence = []
                 self.player_sequence = []
 
+                # Create font
                 self.critterfont = font.Font(family = "Helvetica")
                 self.critterFont = font.Font(size = 20)
                 
                 # Create labels
                 label_frame = Frame(self.master)
                 label_frame.pack(pady=10)
-
                 self.lbWelcome = Label(label_frame, text="Welcome to Memorize Me!").grid(row=0, column=1)
                 self.lbInstructions = Label(label_frame, text="Press start to see the pattern, memorize and copy it, and click submit.").grid(row=1, column=1)
-                self.statusVar = StringVar()
-                self.statusVar.set("Press start!")
-                self.lbStatus = Label(label_frame, textvariable = self.statusVar, fg = 'blue').grid(row=3, column=1)
 
                 # Create buttons
                 button_frame = Frame(self.master)
@@ -485,19 +505,22 @@ class crittercraft():
                 self.disable_buttons()
                 self.master.mainloop()
 
+            # Function to disable buttons
             def disable_buttons(self):
                 for direction in ["Left", "Right", "Up", "Down"]:
                     self.get_button(direction).config(state=DISABLED)
 
+            # Function to enable buttons
             def enable_buttons(self):
                 for direction in ["Left", "Right", "Up", "Down"]:
                     self.get_button(direction).config(state=NORMAL)
 
+            # Appends user clicked directional button to their sequence submission
             def add_to_player_sequence(self, direction):
                 self.player_sequence.append(direction)
 
+            # Starts game
             def start_game(self):
-                self.statusVar.set("Wait and watch... When the pattern finishes, repeat it, and press submit!")
                 self.sequence = []
                 self.player_sequence = []
                 self.disable_buttons()
@@ -505,31 +528,42 @@ class crittercraft():
                 self.show_sequence()
                 self.enable_buttons()
 
+            # Generates a random sequence
             def generate_sequence(self):
                 directions = ["Left", "Right", "Up", "Down"]
                 for i in range(5):  # Adjust the number of moves in the sequence as needed
                     self.sequence.append(random.choice(directions))
 
+            # Displays the generated sequence
             def show_sequence(self):
                 for i, direction in enumerate(self.sequence):
                     self.master.after(i * 1500, lambda d=direction: self.highlight_button(d))
                     self.master.after((i + 1) * 1800, self.clear_highlight)
 
+            # Highlights a button with red text
             def highlight_button(self, direction):
                 self.get_button(direction).config(fg="red")
 
+            # Makes a button text black again
             def clear_highlight(self):
                 for direction in ["Left", "Right", "Up", "Down"]:
                     self.get_button(direction).config(fg="black")
 
+            # Checks if player's sequence matches the generated/shown sequence to decide if the player won
             def check_sequence(self):
                 if self.player_sequence == self.sequence:
                     messagebox.showinfo("Success", "Correct sequence! You won! Health max will increase by 1.")
+
+                    # Won, so increase health max value
                     critCraft_self.critterHealthMax += 1
                     critCraft_self.canvas.delete("hp")
                     critCraft_self.canvas.create_text(200, 100, text = f"Health: {critCraft_self.critterHealth} / {critCraft_self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
                     critCraft_self.activeTimer = 0
+
+                    # Close window
                     self.master.destroy()
+
+                    # Stop game music and play hub music
                     pygame.mixer.music.stop()
                     pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
                     pygame.mixer.music.play(loops = -1)
@@ -538,16 +572,17 @@ class crittercraft():
                 else:
                     messagebox.showerror("Error", "Incorrect sequence. Try again next time.")
                     critCraft_self.activeTimer = 0
+
+                    # Close window
                     self.master.destroy()
+
+                    # Stop game music and play hub music 
                     pygame.mixer.music.stop()
                     pygame.mixer.music.load(f"{p.parent}/hub-music.mp3")
                     pygame.mixer.music.play(loops = -1)
                     return
-                self.statusVar.set("Press start!")
-                self.disable_buttons()
-                self.sequence = []
-                self.player_sequence = []
-
+                
+            # Retrieves button depending on given direction string
             def get_button(self, direction):
                 if direction == "Up":
                     return self.btUp
@@ -561,6 +596,8 @@ class crittercraft():
         MemorizationGame()
 
     def boneGame(self):
+        # Tic Tac Bone game. User has to get 3 bones in a row playing against a random computer.
+
         critCraft_self = self
         class TicTacBoneGUI():
             def __init__(self):  # Set up intial state of tictacbone
@@ -574,8 +611,6 @@ class crittercraft():
                     None, None, None], [None, None, None]]
                 # The current player is 'X'
                 self.current_player = "X"
-                # Store game outcome to 0 for on-going
-                self.outcome = 0
 
                 # Create buttons for the 3 by 3 tictacbone grid
                 for i in range(3):
@@ -689,6 +724,7 @@ class crittercraft():
         TicTacBoneGUI()
 
     def loveGame(self):
+        # Guess the Love game. Player must guess a number between 1-10 in three or less turns. 
         critCraft_self = self
         class HeartGuessing():
             def __init__(self):
@@ -775,10 +811,11 @@ class crittercraft():
                 self.canvas.delete("hp")
                 self.canvas.create_text(200, 100, text = f"Health: {self.critterHealth} / {self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
                 if self.critterHealth <= 0:
+                    # Kills critter
                     self.canvas.delete("all")
                     self.canvas.create_image(400, 400, image = self.bg_death)
-                    self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
-                    self.canvas.create_window(400, 600, window = self.restartGame)
+                    self.canvas.create_text(400, 350, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                    self.canvas.create_window(400, 650, window = self.restartGame)
                     pygame.mixer.music.stop()
                     pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                     pygame.mixer.music.play(loops = -1)
@@ -794,10 +831,11 @@ class crittercraft():
                 self.canvas.delete("hgr")
                 self.canvas.create_text(400, 100, text = f"Hunger: {self.critterHun} / {self.critterHunMax}", font = "Helvetica 20", tag = "hgr")
                 if self.critterHun <= 0:
+                    # Kills critter
                     self.canvas.delete("all")
                     self.canvas.create_image(400, 400, image = self.bg_death)
-                    self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
-                    self.canvas.create_window(400, 600, window = self.restartGame)
+                    self.canvas.create_text(400, 350, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                    self.canvas.create_window(400, 650, window = self.restartGame)
                     pygame.mixer.music.stop()
                     pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                     pygame.mixer.music.play(loops = -1)
@@ -814,10 +852,11 @@ class crittercraft():
                 self.canvas.delete("lov")
                 self.canvas.create_text(600, 100, text = f"Love: {self.critterLove} / {self.critterLoveMax}", font = "Helvetica 20", tag = "lov")
                 if self.critterLove <= 0:
+                    # Kills critter
                     self.canvas.delete("all")
                     self.canvas.create_image(400, 400, image = self.bg_death)
-                    self.canvas.create_text(400, 400, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
-                    self.canvas.create_window(400, 600, window = self.restartGame)
+                    self.canvas.create_text(400, 350, text = f"{self.yourCritterName} DIED", font = "Impact 30", fill = "red")
+                    self.canvas.create_window(400, 650, window = self.restartGame)
                     pygame.mixer.music.stop()
                     pygame.mixer.music.load(f"{p.parent}/funeral-music.mp3")
                     pygame.mixer.music.play(loops = -1)
@@ -825,7 +864,8 @@ class crittercraft():
                 internal_timer2.start()
         else:
             internal_timer2.start()
-
+    
+    # Resets values and starts game up again from creating a critter
     def resetGame(self):
         pygame.mixer.music.stop()
         self.critterType = ""
