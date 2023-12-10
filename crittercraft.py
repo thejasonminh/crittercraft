@@ -3,8 +3,8 @@
 # Instructor: Maher Elshakankiri
 # Assignment: Final Project
 # Date Created: 11/25/2023
-# Last Modified: 11/25/2023
-# Purpose: CritterCraft
+# Last Modified: 12/10/2023
+# Purpose: CritterCraft is a game where the player takes care of a chosen animal through care actions and playing minigames with it, trying to keep it alive! 
 
 from tkinter import * # Import tkinter
 from tkinter import messagebox
