@@ -14,7 +14,6 @@ from pygame.locals import *
 import tkinter.font as font
 import threading
 import random
-import sys
 
 p = Path(__file__)
 print(p.parent)
