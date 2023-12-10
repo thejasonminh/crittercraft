@@ -249,33 +249,24 @@ class crittercraft():
     def confirmColor(self):
         if self.critterType == "Panda":
             if self.colorchoice.get() == 1:
-                print("white panda")
                 self.yourCritter = self.white_panda
             elif self.colorchoice.get() == 2:
-                print("pink panda")
                 self.yourCritter = self.pink_panda
             else:
-                print("red panda")
                 self.yourCritter = self.red_panda
         elif self.critterType == "Sheep":
             if self.colorchoice.get() == 1:
-                print("white sheep")
                 self.yourCritter = self.white_sheep
             elif self.colorchoice.get() == 2:
-                print("pink sheep")
                 self.yourCritter = self.pink_sheep
             else:
-                print("black sheep")
                 self.yourCritter = self.black_sheep
         elif self.critterType == "Duck":
             if self.colorchoice.get() == 1:
-                print("white duck")
                 self.yourCritter = self.white_duck
             elif self.colorchoice.get() == 2:
-                print("yellow duck")
                 self.yourCritter = self.yellow_duck
             else:
-                print("pink duck")
                 self.yourCritter = self.pink_duck
         self.typeName()
 
@@ -357,7 +348,6 @@ class crittercraft():
 
     def openCareWindow(self):
         self.activeTimer = 1
-        print("Care button pressed")
         careWindow = Toplevel(self.window)
         careWindow.title("Care")
         careWindow.geometry("200x100")
@@ -376,7 +366,6 @@ class crittercraft():
             dying = 1
 
         if num == 1:
-            print("hp care")
             if self.critterHealth < self.critterHealthMax:
                 self.critterHealth += 1
                 self.canvas.delete("hp")
@@ -384,7 +373,6 @@ class crittercraft():
             else:
                 None
         elif num == 2: 
-            print("hgr care")
             if self.critterHun < self.critterHunMax:
                 self.critterHun += 1
                 self.canvas.delete("hgr")
@@ -392,7 +380,6 @@ class crittercraft():
             else:
                 None
         elif num == 3:
-            print("lov care")
             if self.critterLove < self.critterLoveMax:
                 self.critterLove += 1
                 self.canvas.delete("lov")
@@ -431,13 +418,10 @@ class crittercraft():
         pygame.mixer.music.load(f"{p.parent}/minigame-music.mp3")
         pygame.mixer.music.play(loops = -1)
         if num == 1:
-            print("Memorization game")
             self.memGame()
         elif num == 2:
-            print("Bone game")
             self.boneGame()
         elif num == 3:
-            print("Love game")
             self.loveGame()
 
     def memGame(self):
@@ -541,7 +525,6 @@ class crittercraft():
             def check_sequence(self):
                 if self.player_sequence == self.sequence:
                     messagebox.showinfo("Success", "Correct sequence! You won! Health max will increase by 1.")
-                    print(3)
                     critCraft_self.critterHealthMax += 1
                     critCraft_self.canvas.delete("hp")
                     critCraft_self.canvas.create_text(200, 100, text = f"Health: {critCraft_self.critterHealth} / {critCraft_self.critterHealthMax}", font = "Helvetica 20", tag = "hp")
@@ -782,8 +765,6 @@ class crittercraft():
 
         if self.activeTimer == 0:
             randStat = random.randint(0, 2)
-            print(randStat)
-            print("timer tick")
             ## Health goes down
             if randStat == 0:
                 self.critterHealth -= 1
@@ -843,7 +824,6 @@ class crittercraft():
                     internal_timer2.cancel()
                 internal_timer2.start()
         else:
-            print("timer inactive")
             internal_timer2.start()
 
     def resetGame(self):
